@@ -1,4 +1,4 @@
-package engine.items;
+package engine.model.items;
 
 import java.util.List;
 
@@ -7,6 +7,11 @@ public class LimitedInventory extends InfiniteInventory {
 
   public LimitedInventory(List<Item> items,  int maxWeight) {
     super(items);
+    this.maxWeight = maxWeight;
+  }
+
+  public LimitedInventory(int maxWeight) {
+    super();
     this.maxWeight = maxWeight;
   }
 

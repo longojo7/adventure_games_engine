@@ -1,10 +1,13 @@
-package engine.player;
+package engine.model.player;
+
+import java.util.List;
 
 import engine.Direction;
-import engine.rooms.IRoom;
+import engine.model.items.Item;
+import engine.model.rooms.IRoom;
 
 public interface IPlayer {
-  int getMaxHealth();
+  String healthStatus();
 
   void damage(int damage);
 
@@ -12,9 +15,11 @@ public interface IPlayer {
 
   int getScore();
 
+  void addObstacleScore(int score);
+
   String getName();
 
-  String setName();
+  void setName(String name);
 
   IRoom peek(Direction direction);
 
@@ -27,4 +32,6 @@ public interface IPlayer {
   boolean dropItem(String id);
 
   boolean hasItem(String id);
+
+  List<Item> itemsList();
 }

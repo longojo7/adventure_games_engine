@@ -1,4 +1,4 @@
-package engine.rooms.obstacles;
+package engine.model.rooms.obstacles;
 
 public class PasswordSolution implements ISolution {
   private final String password;

@@ -1,4 +1,4 @@
-package engine.rooms;
+package engine.model.rooms;
 
 public class Connection {
   private boolean isOpen;

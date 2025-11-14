@@ -1,4 +1,4 @@
-package engine.items;
+package engine.model.items;
 
 import java.util.Objects;
 

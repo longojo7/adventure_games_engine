@@ -1,8 +1,8 @@
-package engine.rooms.obstacles;
+package engine.model.rooms.obstacles;
 
 import java.util.List;
 
-import engine.items.Item;
+import engine.model.items.Item;
 
 public class ItemSolution implements ISolution {
   private final List<Item> items;

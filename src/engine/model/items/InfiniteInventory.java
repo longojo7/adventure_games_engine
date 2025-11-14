@@ -1,5 +1,6 @@
-package engine.items;
+package engine.model.items;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InfiniteInventory implements IInventory {
@@ -7,6 +8,10 @@ public class InfiniteInventory implements IInventory {
 
   public InfiniteInventory(List<Item> items) {
     this.items = List.copyOf(items);
+  }
+
+  public InfiniteInventory() {
+    this.items = new ArrayList<>();
   }
 
   @Override
