@@ -16,6 +16,16 @@ public class EngineModel implements IEngineModel {
   Player player;
 
   @Override
+  public void setPlayerName(String name) {
+    player.setName(name);
+  }
+
+  @Override
+  public String getPlayerName() {
+    return player.getName();
+  }
+
+  @Override
   public boolean walk(Direction direction) {
     return player.walk(direction);
   }

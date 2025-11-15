@@ -5,11 +5,22 @@ import java.util.List;
 import engine.Direction;
 
 public class DummyModel implements IEngineModel {
+  private String name;
   private int westStepsTaken;
   private boolean monsterActive = true;
 
   public int getWestStepsTaken() {
     return westStepsTaken;
+  }
+
+  @Override
+  public void setPlayerName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String getPlayerName() {
+    return name;
   }
 
   @Override

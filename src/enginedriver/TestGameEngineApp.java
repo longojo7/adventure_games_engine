@@ -10,7 +10,7 @@ import java.io.StringWriter;
  */
 public class TestGameEngineApp {
   public static void main(String[] args) {
-    String testInput = "I\nL\nX Monster\nT Room Item 1\nI\nQ\n";
+    String testInput = "Josh The Great\nL\nX Monster\nT Room Item 1\nI\nQ\n";
 
     StringReader input = new StringReader(testInput);
 

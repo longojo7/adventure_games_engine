@@ -1,17 +1,17 @@
 package engine.controller;
 
-import engine.Direction;
-import engine.model.IEngineModel;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+
+import engine.Direction;
+import engine.model.IEngineModel;
 
 /**
  * Controller for the adventure game engine.
  * Handles user input, command parsing, and interaction with the game model.
  */
-public class GameController {
+public class GameController implements IGameController {
   private final IEngineModel model;
   private final Readable input;
   private final Appendable output;
@@ -41,7 +41,10 @@ public class GameController {
    */
   public void go() throws IOException {
     gameRunning = true;
+    output.append("Please enter the name of your player: ");
     Scanner scanner = new Scanner(input);
+    String playerName = scanner.nextLine();
+    model.setPlayerName(playerName);
 
     displayWelcomeMessage();
     displayRoomDescription();
@@ -49,14 +52,11 @@ public class GameController {
     while (gameRunning && scanner.hasNextLine()) {
       output.append("\n> ");
       String command = scanner.nextLine().trim();
-
       if (command.isEmpty()) {
         continue;
       }
-
       processCommand(command);
     }
-
     scanner.close();
   }
 
@@ -65,7 +65,9 @@ public class GameController {
    * @throws IOException if an I/O error occurs.
    */
   private void displayWelcomeMessage() throws IOException {
-    output.append("Welcome to the Adventure Game!\n");
+    output.append("\nWelcome to the Adventure Game "
+            + model.getPlayerName()
+            + "\n" + "-----------");
     output.append("\nAvailable commands:\n");
     output.append("  To move, enter: (N)orth, (S)outh, (E)ast or (W)est.\n");
     output.append("  Other actions: (I)nventory, (L)ook around the location, (U)se an item\n");
@@ -194,8 +196,9 @@ public class GameController {
         break;
       default:
         output.append("Unknown command: ").append(cmd).append("\n");
-        output.append("Type one of the available commands ((N)orth, (S)outh, (E)ast, (W)est, (T)ake, (D)rop, " +
-                "e(X)amine, (L)ook, (U)se, (I)nventory, (A)nswer, (Q)uit)\n");
+        output.append("Type one of the available commands ((N)orth, " +
+                "(S)outh, (E)ast, (W)est, (T)ake, (D)rop, e(X)amine, " +
+                "(L)ook, (U)se, (I)nventory, (A)nswer, (Q)uit)\n");
     }
   }
 
