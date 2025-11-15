@@ -1,6 +1,7 @@
 package enginedriver;
 
 import engine.controller.GameController;
+import engine.controller.IGameController;
 import engine.model.DummyModel;
 import engine.model.IEngineModel;
 
@@ -16,7 +17,7 @@ public class GameEngineApp {
   private final Readable source;
   private final Appendable output;
   private IEngineModel model;
-  private GameController controller;
+  private IGameController controller;
 
   /**
    * Constructs a new GameEngineApp.

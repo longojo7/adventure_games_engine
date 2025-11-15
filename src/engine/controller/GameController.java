@@ -39,6 +39,7 @@ public class GameController implements IGameController {
    * Starts the game loop and processes user commands.
    * @throws IOException if an I/O error occurs.
    */
+  @Override
   public void go() throws IOException {
     gameRunning = true;
     output.append("Please enter the name of your player: ");
