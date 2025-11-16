@@ -46,8 +46,10 @@ public class GameController implements IGameController {
     Scanner scanner = new Scanner(input);
     String playerName = scanner.nextLine();
     model.setPlayerName(playerName);
-
-    displayWelcomeMessage();
+    output.append("Welcome to the Adventure Game "
+            + model.getPlayerName()
+            + "\n" + "-----------\n\n");
+    displayCommandMenu();
     displayRoomDescription();
 
     while (gameRunning && scanner.hasNextLine()) {
@@ -62,18 +64,16 @@ public class GameController implements IGameController {
   }
 
   /**
-   * Displays the welcome message and command instructions.
+   * Displays the command instructions.
    * @throws IOException if an I/O error occurs.
    */
-  private void displayWelcomeMessage() throws IOException {
-    output.append("\nWelcome to the Adventure Game "
-            + model.getPlayerName()
-            + "\n" + "-----------");
+  private void displayCommandMenu() throws IOException {
     output.append("\nAvailable commands:\n");
     output.append("  To move, enter: (N)orth, (S)outh, (E)ast or (W)est.\n");
     output.append("  Other actions: (I)nventory, (L)ook around the location, (U)se an item\n");
     output.append("  (T)ake an item, (D)rop an item, or e(X)amine something.\n");
     output.append("  (A)nswer a question or provide a text solution.\n");
+    output.append("  Enter (H)elp to look at the available player commands.\n");
     output.append("  To end the game, enter (Q)uit to quit and exit.\n");
     output.append("  Save and Restore to save/load your game.\n\n");
   }
@@ -194,6 +194,10 @@ public class GameController implements IGameController {
       case "Q":
       case "QUIT":
         handleQuit();
+        break;
+      case "H":
+      case "HELP":
+        displayCommandMenu();
         break;
       default:
         output.append("Unknown command: ").append(cmd).append("\n");

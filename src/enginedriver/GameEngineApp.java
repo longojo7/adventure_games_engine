@@ -73,14 +73,14 @@ public class GameEngineApp {
    * @param args command line arguments (expects game file name as first argument).
    */
   public static void main(String[] args) {
-    if (args.length < 1) {
-      System.err.println("Usage: java enginedriver.GameEngineApp <game-file> \n You are seeing this because you are" +
-              " trying to run the engine with no data. Parsing must be done so we can hand data to the engine.");
-      System.exit(1);
-    }
-
-    String gameFile = args[0];
-    GameEngineApp app = new GameEngineApp(gameFile, new InputStreamReader(System.in), System.out);
+//    if (args.length < 1) {
+//      System.err.println("Usage: java enginedriver.GameEngineApp <game-file> \n You are seeing this because you are" +
+//              " trying to run the engine with no data. Parsing must be done so we can hand data to the engine.");
+//      System.exit(1);
+//    }
+//
+//    String gameFile = args[0];
+    GameEngineApp app = new GameEngineApp("gameFile", new InputStreamReader(System.in), System.out);
 
     try {
       app.start();
