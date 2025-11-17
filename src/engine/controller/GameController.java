@@ -46,21 +46,29 @@ public class GameController implements IGameController {
     Scanner scanner = new Scanner(input);
     String playerName = scanner.nextLine();
     model.setPlayerName(playerName);
-    output.append("Welcome to the Adventure Game "
+    output.append("You will now be named: "
             + model.getPlayerName()
-            + "\n" + "-----------\n\n");
+            + "\nWelcome to the world of Adventures!"
+            + "\n------------------------------\n");
     displayCommandMenu();
+    output.append("\nYou start your adventur in the ").append(model.roomName()).append("\n");
     displayRoomDescription();
+    output.append("\n------------------------------" +
+            "\nYour Choice: ");
 
     while (gameRunning && scanner.hasNextLine()) {
-      output.append("\n> ");
       String command = scanner.nextLine().trim();
       if (command.isEmpty()) {
         continue;
       }
       processCommand(command);
+      if (gameRunning) {
+        output.append("\n------------------------------\n"
+                + "Enter (H)elp to view player commands\n"
+                + "Your Choice: ");
+      }
     }
-    scanner.close();
+    scanner.close(); // Do we need this?
   }
 
   /**
@@ -68,14 +76,14 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void displayCommandMenu() throws IOException {
-    output.append("\nAvailable commands:\n");
-    output.append("  To move, enter: (N)orth, (S)outh, (E)ast or (W)est.\n");
-    output.append("  Other actions: (I)nventory, (L)ook around the location, (U)se an item\n");
-    output.append("  (T)ake an item, (D)rop an item, or e(X)amine something.\n");
-    output.append("  (A)nswer a question or provide a text solution.\n");
-    output.append("  Enter (H)elp to look at the available player commands.\n");
-    output.append("  To end the game, enter (Q)uit to quit and exit.\n");
-    output.append("  Save and Restore to save/load your game.\n\n");
+    output.append("\nAvailable commands:\n"
+            + "To move, enter: (N)orth, (S)outh, (E)ast or (W)est.\n"
+            + "Other actions: (I)nventory, (L)ook around the location, (U)se an item\n"
+            + "(T)ake an item, (D)rop an item, or e(X)amine something.\n"
+            + "(A)nswer a question or provide a text solution.\n"
+            + "Enter (H)elp to look at the available player commands.\n"
+            + "To end the game, enter (Q)uit to quit and exit.\n"
+            + "Save and Restore to save/load your game.\n");
   }
 
   /**
@@ -83,16 +91,12 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void displayRoomDescription() throws IOException {
-    output.append("\n=== ").append(model.roomName()).append(" ===\n");
     output.append(model.environmentDescription()).append("\n");
-
     String monsterAttack = model.monsterAttack();
     if (monsterAttack != null) {
-      output.append("\n").append(monsterAttack).append("\n");
+      output.append(monsterAttack);
     }
-
     displayAvailableExits();
-
     displayRoomItems();
   }
 
@@ -103,7 +107,6 @@ public class GameController implements IGameController {
   private void displayAvailableExits() throws IOException {
     StringBuilder exits = new StringBuilder("\nAvailable exits:");
     boolean hasExits = false;
-
     for (Direction dir : Direction.values()) {
       String roomName = model.peek(dir);
       if (roomName != null) {
@@ -111,11 +114,10 @@ public class GameController implements IGameController {
         hasExits = true;
       }
     }
-
     if (hasExits) {
-      output.append(exits.toString()).append("\n");
+      output.append(exits.toString());
     } else {
-      output.append("\nNo available exits.\n");
+      output.append("\nNo available exits.");
     }
   }
 
@@ -126,7 +128,9 @@ public class GameController implements IGameController {
   private void displayRoomItems() throws IOException {
     List<String> items = model.roomItemList();
     if (items != null && !items.isEmpty()) {
-      output.append("\nItems here: ").append(String.join(", ", items)).append("\n");
+      output.append("\nItems here: ").
+              append(String.join(", ", items)).
+              append("\n");
     }
   }
 
@@ -180,6 +184,7 @@ public class GameController implements IGameController {
       case "I":
       case "INVENTORY":
         handleInventory();
+        displayPlayerStatus();
         break;
       case "A":
       case "ANSWER":
@@ -201,9 +206,9 @@ public class GameController implements IGameController {
         break;
       default:
         output.append("Unknown command: ").append(cmd).append("\n");
-        output.append("Type one of the available commands ((N)orth, " +
-                "(S)outh, (E)ast, (W)est, (T)ake, (D)rop, e(X)amine, " +
-                "(L)ook, (U)se, (I)nventory, (A)nswer, (Q)uit)\n");
+        output.append("Type one of the available commands ((N)orth, "
+                + "(S)outh, (E)ast, (W)est, (T)ake, (D)rop, e(X)amine, "
+                + "(L)ook, (U)se, (I)nventory, (A)nswer, (H)elp, (Q)uit)\n");
     }
   }
 
@@ -215,9 +220,10 @@ public class GameController implements IGameController {
   private void handleMove(Direction direction) throws IOException {
     if (model.walk(direction)) {
       output.append("You move ").append(direction.name().toLowerCase()).append(".\n");
+      // may have to revisit this since I'm not sure what movement will look it
       displayRoomDescription();
     } else {
-      output.append("You cannot go that way.\n");
+      output.append(">> You cannot go that direction! <<\n");
     }
   }
 
@@ -250,10 +256,8 @@ public class GameController implements IGameController {
       output.append("Drop what? Please specify an item name.\n");
       return;
     }
-
     if (model.dropItem(itemName)) {
-      output.append("You dropped: ").append(itemName).append("\n");
-      displayPlayerStatus();
+      output.append("You dropped ").append(itemName).append("in the ").append(model.roomName());
     } else {
       output.append("You don't have that item.\n");
     }
@@ -283,6 +287,7 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void handleLook() throws IOException {
+    output.append("\nYou are standing in the ").append(model.roomName()).append("\n");
     displayRoomDescription();
   }
 
@@ -322,8 +327,6 @@ public class GameController implements IGameController {
     } else {
       output.append("  (empty)\n");
     }
-    //Included player status here as well so its included in the inventory "view"
-    displayPlayerStatus();
   }
 
   /**
@@ -376,6 +379,8 @@ public class GameController implements IGameController {
    */
   private void handleQuit() throws IOException {
     output.append("Thank you for playing! Goodbye.\n");
+    output.append("Player Score: ").append(String.valueOf(model.getPlayerScore()))
+            .append("\n").append("Player Rank: ").append(String.valueOf(model.getPlayerRank()));
     gameRunning = false;
   }
 

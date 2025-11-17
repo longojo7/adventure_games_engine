@@ -6,6 +6,7 @@ import engine.Direction;
 
 public class DummyModel implements IEngineModel {
   private String name;
+  private int score = 0;
   private int westStepsTaken;
   private boolean monsterActive = true;
 
@@ -21,6 +22,22 @@ public class DummyModel implements IEngineModel {
   @Override
   public String getPlayerName() {
     return name;
+  }
+
+  @Override
+  public int getPlayerScore() {
+    // simple score adds or subtracts 10 if item is picked up or dropped
+    return score;
+  }
+
+  @Override
+  public String getPlayerRank() {
+    if (getPlayerScore() >= 20) {
+      return "MASTER";
+    } else if (getPlayerScore() >= 10) {
+      return "SKILLED";
+    }
+    return "NOVICE";
   }
 
   @Override
@@ -54,12 +71,20 @@ public class DummyModel implements IEngineModel {
 
   @Override
   public boolean pickupItem(String itemName) {
-    return roomItemList().contains(itemName);
+    if (roomItemList().contains(itemName)) {
+      score += 10;
+      return true;
+    }
+    return false;
   }
 
   @Override
   public boolean dropItem(String itemName) {
-    return playerItemList().contains(itemName);
+    if (playerItemList().contains(itemName)) {
+      score -= 10;
+      return true;
+    }
+    return false;
   }
 
   @Override

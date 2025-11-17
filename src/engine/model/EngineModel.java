@@ -26,6 +26,17 @@ public class EngineModel implements IEngineModel {
   }
 
   @Override
+  public int getPlayerScore() {
+    return player.getScore();
+  }
+
+  @Override
+  public String getPlayerRank() {
+    // TODO: Need to add player rank functionality in the model
+    return "";
+  }
+
+  @Override
   public boolean walk(Direction direction) {
     return player.walk(direction);
   }

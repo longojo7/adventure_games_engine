@@ -9,6 +9,10 @@ public interface IEngineModel {
 
   String getPlayerName();
 
+  int getPlayerScore();
+
+  String getPlayerRank();
+
   boolean walk(Direction direction);
 
   String peek(Direction direction);
