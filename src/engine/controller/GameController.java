@@ -51,7 +51,7 @@ public class GameController implements IGameController {
             + "\nWelcome to the world of Adventures!"
             + "\n------------------------------\n");
     displayCommandMenu();
-    output.append("\nYou start your adventur in the ").append(model.roomName()).append("\n");
+    output.append("\nYou start your adventure in the ").append(model.roomName()).append("\n");
     displayRoomDescription();
     output.append("\n------------------------------" +
             "\nYour Choice: ");
@@ -68,7 +68,7 @@ public class GameController implements IGameController {
                 + "Your Choice: ");
       }
     }
-    scanner.close(); // Do we need this?
+    scanner.close(); 
   }
 
   /**
@@ -410,6 +410,6 @@ public class GameController implements IGameController {
    * @param state the saved state to restore.
    */
   private void restoreGameState(String state) {
-    // For now, this is a no-op as we would need model support for state restoration
+    // For now, this is a no-op as we would need the model to support state restoration.
   }
 }
