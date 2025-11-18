@@ -51,11 +51,10 @@ public class GameController implements IGameController {
             + "\nWelcome to the world of Adventures!"
             + "\n------------------------------\n");
     displayCommandMenu();
-    output.append("\nYou start your adventur in the ").append(model.roomName()).append("\n");
+    output.append("\nYou start your adventure in the ").append(model.roomName()).append("\n");
     displayRoomDescription();
     output.append("\n------------------------------" +
             "\nYour Choice: ");
-
     while (gameRunning && scanner.hasNextLine()) {
       String command = scanner.nextLine().trim();
       if (command.isEmpty()) {
