@@ -60,7 +60,21 @@ public class Item {
   }
 
   public static Item fromID(String id) {
-    return null; //TODO implement item creation
+    // TODO: Implement item creation
+    // example for testing!
+    switch (id) {
+      case "thumb drive":
+        return new Item("thumb drive", "Thumb Drive", 150, 1,
+                "A USB thumb drive for computers", 1000, 1000);
+      case "lamp":
+        return new Item("lamp", "Lamp", 100, 3,
+                "An old oil lamp with flint to spark.", 100, 20);
+      case "carrot":
+        return new Item("carrot", "Carrot", 5, 10,
+                "A HUGE carrot!", 1, 1);
+      default:
+        throw new IllegalArgumentException("Unknown item id: " + id);
+    }
   }
 
   @Override

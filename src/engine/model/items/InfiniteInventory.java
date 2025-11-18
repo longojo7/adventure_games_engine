@@ -7,7 +7,9 @@ public class InfiniteInventory implements IInventory {
   private final List<Item> items;
 
   public InfiniteInventory(List<Item> items) {
-    this.items = List.copyOf(items);
+    // this was changed from this.items = List.copyOf(items);
+    // since copyOf is an immutable list so takeFrom wouldn't remove!
+    this.items = new ArrayList<>(items);
   }
 
   public InfiniteInventory() {
