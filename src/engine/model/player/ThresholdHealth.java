@@ -62,7 +62,7 @@ public class ThresholdHealth implements IHealth {
       return thresholds.get(keys.getFirst());
     }
 
-    // then loop through the keys to and see if health is less than and return if so
+    // then loop through the keys to and see if health is less than and return thresh if so
     for (Integer key : keys) {
       if (health < key) {
         return thresholds.get(key);
