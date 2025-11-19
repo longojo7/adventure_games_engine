@@ -57,12 +57,19 @@ public class ThresholdHealth implements IHealth {
     List<Integer> keys = new ArrayList<>(thresholds.keySet());
     keys.sort(Integer::compareTo);
 
-    String status = thresholds.get(0);
-    for (Integer key : keys) {
-      if(health < key)
-        status = thresholds.get(key);
+    // had to update this method to handle if health is 0 or below
+    if (health <= keys.getFirst()) {
+      return thresholds.get(keys.getFirst());
     }
-    return status;
+
+    // then loop through the keys to and see if health is less than and return if so
+    for (Integer key : keys) {
+      if (health < key) {
+        return thresholds.get(key);
+      }
+    }
+    // return last key if health is greater than all keys
+    return thresholds.get(keys.getLast());
   }
 
   @Override
