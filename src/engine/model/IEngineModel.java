@@ -1,8 +1,11 @@
 package engine.model;
 
 import java.util.List;
+import java.util.Map;
 
 import engine.Direction;
+import engine.model.player.Player;
+import engine.model.rooms.IRoom;
 
 public interface IEngineModel {
   void setPlayerName(String name);
@@ -38,4 +41,8 @@ public interface IEngineModel {
   String environmentDescription();
 
   String monsterAttack();
+
+  Player getPlayer();
+
+  Map<String, IRoom> getRooms();
 }

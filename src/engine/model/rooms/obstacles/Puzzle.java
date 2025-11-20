@@ -50,10 +50,15 @@ public class Puzzle implements IObstacle {
   public boolean attemptSolution(ISolution solution) {
     if (!correctSolution.checkSolution(solution))
       return false;
+    forceSolve();
+    return true;
+  }
+
+  @Override
+  public void forceSolve() {
     isSolved = true;
     for (EventHandler eventHandler : eventHandlers)
       eventHandler.onEvent(new GameEvent(messageOnSolve));
-    return true;
   }
 
   @Override

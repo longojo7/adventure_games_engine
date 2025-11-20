@@ -6,8 +6,8 @@
     "current_health": "50",
     "max_health": "100",
     "items": "Lamp, Key",
-    "max_weight": "20",
-    "room_number": "4"
+    "room_number": "4",
+    "solved_rooms": "2"
   },
   "rooms": [
     {

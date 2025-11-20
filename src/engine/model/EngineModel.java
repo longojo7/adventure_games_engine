@@ -2,6 +2,7 @@ package engine.model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import engine.Direction;
@@ -14,9 +15,11 @@ import engine.model.rooms.obstacles.PasswordSolution;
 
 public class EngineModel implements IEngineModel {
   Player player;
+  Map<String, IRoom> rooms;
 
-  public EngineModel(Player player) {
+  public EngineModel(Player player, Map<String, IRoom> rooms) {
     this.player = player;
+    this.rooms = rooms;
   }
 
   @Override
@@ -129,6 +132,16 @@ public class EngineModel implements IEngineModel {
       return null;
     Monster monster = (Monster) player.getCurrentRoom().getObstacle();
     return monster.getAttack();
+  }
+
+  @Override
+  public Player getPlayer() {
+    return player;
+  }
+
+  @Override
+  public Map<String, IRoom> getRooms() {
+    return rooms;
   }
 
   private boolean obstacleIsMonster() {

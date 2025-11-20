@@ -36,6 +36,16 @@ public class Player implements IPlayer {
   }
 
   @Override
+  public int currentHealth() {
+    return health.getHealth();
+  }
+
+  @Override
+  public int maxHealth() {
+    return health.getMaxHealth();
+  }
+
+  @Override
   public void damage(int damage) {
     health.damage(damage);
   }

@@ -9,6 +9,8 @@ public interface IObstacle {
 
   boolean attemptSolution(ISolution solution);
 
+  void forceSolve();
+
   void addEventHandler(EventHandler eventHandler);
 
   int getValue();

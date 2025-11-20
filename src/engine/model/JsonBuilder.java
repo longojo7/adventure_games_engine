@@ -93,14 +93,20 @@ public class JsonBuilder implements IGameBuilder {
 
     Player player;
 
-    if (playerData == null)
+    if (playerData == null) {
       player = new Player(
               playerName,
               new ThresholdHealth(100, 100, thresholdMap),
               new LimitedInventory(new ArrayList<Item>(), 20),
               rooms.get("1")
       );
-    else
+      for (IRoom room : rooms.values()) {
+        if (room.getObstacle() != null)
+          room.getObstacle().addEventHandler(
+                  event -> player.addObstacleScore(room.getObstacle().getValue())
+          );
+      }
+    } else {
       player = new Player(
               playerData.get("name") == null ? playerName : playerData.get("name").toString(),
               new ThresholdHealth(
@@ -109,13 +115,51 @@ public class JsonBuilder implements IGameBuilder {
                       thresholdMap
               ),
               new LimitedInventory(
-                      itemListFromString(playerData.get("items").toString()),
-                      Integer.parseInt(playerData.get("max_weight").toString())
-              ),
+                      itemListFromString(playerData.get("items").toString()), 20),
               rooms.get(playerData.get("room_number").toString())
       );
+      for (IRoom room : rooms.values()) {
+        if (room.getObstacle() != null)
+          room.getObstacle().addEventHandler(
+                  event -> player.addObstacleScore(room.getObstacle().getValue())
+          );
+      }
+      for (IRoom room : rooms.values()) {
+        for (Item item : player.itemsList())
+          if (room.getInventory().hasItem(item.getId()))
+            room.getInventory().removeItem(item.getId());
+        for (String solvedRoom : playerData.get("solved_rooms").toString().split(", "))
+          if (rooms.get(solvedRoom) == room)
+            room.getObstacle().forceSolve();
+      }
+    }
 
-    return new EngineModel(player);
+    return new EngineModel(player, rooms);
+  }
+
+  private JSONObject generatePlayerData(Player player, Map<String, IRoom> rooms) {
+    JSONObject newPlayerData = new JSONObject();
+    newPlayerData.put("name", player.getName());
+    newPlayerData.put("current_health", player.currentHealth());
+    newPlayerData.put("max_health", player.maxHealth());
+    newPlayerData.put("items", listToString(
+            player.itemsList().stream().map(item -> item.getId()).collect(Collectors.toList())
+    ));
+    List<String> solvedRoomNumbers = new ArrayList<>();
+    for (String key : rooms.keySet()) {
+      if (rooms.get(key) == player.getCurrentRoom())
+        newPlayerData.put("room_number", key);
+      if (!rooms.get(key).getObstacle().isActive())
+        solvedRoomNumbers.add(key);
+    }
+    newPlayerData.put("solved_rooms", listToString(solvedRoomNumbers));
+    return newPlayerData;
+  }
+
+  @Override
+  public String exportModel(IEngineModel model) {
+    json.put("player", generatePlayerData(model.getPlayer(), model.getRooms()));
+    return json.toJSONString();
   }
 
   private List<Item> itemListFromString(String string) {
@@ -123,6 +167,18 @@ public class JsonBuilder implements IGameBuilder {
     for (String itemName : string.split(", "))
       items.add(ItemFactory.getInstance().getItem(itemName));
     return items;
+  }
+
+  private String listToString(List list) {
+    if (list.isEmpty())
+      return "";
+    StringBuilder sb = new StringBuilder();
+    sb.append(list.get(0).toString());
+    for (int i = 1; i < list.size(); i++) {
+      sb.append(", ");
+      sb.append(list.get(i).toString());
+    }
+    return sb.toString();
   }
 
   private IRoom createRoom(
