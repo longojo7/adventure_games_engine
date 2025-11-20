@@ -48,7 +48,6 @@ public class DummyModel implements IEngineModel {
   @Override
   public String peek(Direction direction) {
     switch (direction) {
-      case null:
       case North:
       case South:
         return null;
@@ -57,6 +56,7 @@ public class DummyModel implements IEngineModel {
       case West:
         return "MORE HALLWAY TO THE WEST";
     }
+    return null;
   }
 
   @Override

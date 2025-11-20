@@ -15,6 +15,10 @@ import engine.model.rooms.obstacles.PasswordSolution;
 public class EngineModel implements IEngineModel {
   Player player;
 
+  public EngineModel(Player player) {
+    this.player = player;
+  }
+
   @Override
   public void setPlayerName(String name) {
     player.setName(name);

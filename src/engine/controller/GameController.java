@@ -67,7 +67,7 @@ public class GameController implements IGameController {
                 + "Your Choice: ");
       }
     }
-    scanner.close(); // Do we need this?
+    scanner.close(); 
   }
 
   /**
@@ -409,6 +409,6 @@ public class GameController implements IGameController {
    * @param state the saved state to restore.
    */
   private void restoreGameState(String state) {
-    // For now, this is a no-op as we would need model support for state restoration
+    // For now, this is a no-op as we would need the model to support state restoration.
   }
 }
