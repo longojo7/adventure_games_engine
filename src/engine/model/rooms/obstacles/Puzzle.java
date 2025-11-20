@@ -16,7 +16,15 @@ public class Puzzle implements IObstacle {
   private final int value;
   private boolean isSolved;
 
-  public Puzzle(String name, ISolution correctSolution, String effect, String description, int value, String messageOnSolve, boolean isSolved) {
+  public Puzzle(
+          String name,
+          ISolution correctSolution,
+          String effect,
+          String description,
+          int value,
+          String messageOnSolve,
+          boolean isSolved
+  ) {
     this.name = name;
     this.correctSolution = correctSolution;
     this.effect = effect;

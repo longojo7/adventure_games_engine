@@ -11,13 +11,13 @@ public class Item {
   private int maxUses;
   private int usesRemaining;
 
-  private Item(String id,
-               String name,
-               int value,
-               int weight,
-               String description,
-               int maxUses,
-               int usesRemaining) {
+  protected Item(String id,
+                 String name,
+                 int value,
+                 int weight,
+                 String description,
+                 int maxUses,
+                 int usesRemaining) {
     this.id = id;
     this.name = name;
     this.value = value;
@@ -60,7 +60,7 @@ public class Item {
   }
 
   public static Item fromID(String id) {
-    return null; //TODO implement item creation
+    return ItemFactory.getInstance().getItem(id);
   }
 
   @Override

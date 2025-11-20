@@ -15,7 +15,7 @@ public class Player implements IPlayer {
   private IRoom currentRoom;
   private int obstacleScore;
 
-  Player(String name, IHealth health, IInventory inventory, IRoom startingRoom, int obstacleScore) {
+  public Player(String name, IHealth health, IInventory inventory, IRoom startingRoom, int obstacleScore) {
     this.name = name;
     this.health = health;
     this.inventory = inventory;
@@ -23,7 +23,7 @@ public class Player implements IPlayer {
     this.obstacleScore = obstacleScore;
   }
 
-  Player(String name, IHealth health, IInventory inventory, IRoom startingRoom) {
+  public Player(String name, IHealth health, IInventory inventory, IRoom startingRoom) {
     this.name = name;
     this.health = health;
     this.inventory = inventory;
