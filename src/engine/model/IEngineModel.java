@@ -5,6 +5,14 @@ import java.util.List;
 import engine.Direction;
 
 public interface IEngineModel {
+  void setPlayerName(String name);
+
+  String getPlayerName();
+
+  int getPlayerScore();
+
+  String getPlayerRank();
+
   boolean walk(Direction direction);
 
   String peek(Direction direction);
