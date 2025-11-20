@@ -1,8 +1,11 @@
 package engine.model;
 
 import java.util.List;
+import java.util.Map;
 
 import engine.Direction;
+import engine.model.player.Player;
+import engine.model.rooms.IRoom;
 
 public class DummyModel implements IEngineModel {
   private String name;
@@ -137,5 +140,15 @@ public class DummyModel implements IEngineModel {
   @Override
   public String monsterAttack() {
     return "The monster attacks you nonviolently. You take 5 damage.";
+  }
+
+  @Override
+  public Player getPlayer() {
+    return null;
+  }
+
+  @Override
+  public Map<String, IRoom> getRooms() {
+    return Map.of();
   }
 }
