@@ -1,8 +1,12 @@
 package engine.model.items;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +16,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A test class for the limitedInventory class.
  */
 public class TestLimitedInventory {
+
+  /**
+   * Test setup.
+   * @throws NoSuchFieldException if the items field not found from reflection
+   * @throws IllegalAccessException if reflection fails to set the factory field
+   */
+  @BeforeEach
+  void seedFactory() throws NoSuchFieldException, IllegalAccessException {
+    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 150,
+            1, "A USB storage device.", 1, 1);
+    Item carrot = new Item("carrot", "Carrot", 0, 10,
+            "A fresh carrot.", 1, 1);
+    Item lamp = new Item("lamp", "Lamp", 100, 3,
+            "An old oil lamp with flint to spark.", 100, 20);
+
+    // Seed ItemFactory using reflection
+    Field f = ItemFactory.class.getDeclaredField("items");
+    f.setAccessible(true);
+    Map<String, Item> map = new HashMap<>();
+    map.put("thumb drive", thumbDrive);
+    map.put("carrot", carrot);
+    map.put("lamp", lamp);
+    f.set(ItemFactory.getInstance(), map);
+  }
 
   /**
    * Tests getting the max weight.

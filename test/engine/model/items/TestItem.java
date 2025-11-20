@@ -1,6 +1,11 @@
 package engine.model.items;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -10,6 +15,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * A test class for the Item class.
  */
 public class TestItem {
+
+  /**
+   * Test setup
+   * @throws NoSuchFieldException if the items field not found from reflection
+   * @throws IllegalAccessException if reflection fails to set the factory field
+   */
+  @BeforeEach
+  public void seedFactory() throws NoSuchFieldException, IllegalAccessException {
+    // Construct the items your tests expect
+    Item lamp = new Item("lamp", "Lamp", 100, 3,
+            "An old oil lamp with flint to spark.", 100, 20);
+    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 50, 1,
+            "A small USB drive.", 1, 1);
+
+    // Seed ItemFactory.items map using reflection
+    Field f = ItemFactory.class.getDeclaredField("items");
+    f.setAccessible(true);
+    Map<String, Item> testMap = new HashMap<>();
+    testMap.put("lamp", lamp);
+    testMap.put("thumb drive", thumbDrive);
+    f.set(ItemFactory.getInstance(), testMap);
+  }
 
   /**
    * Tests creating an item from an ID initializes all the right values and the getters work.
