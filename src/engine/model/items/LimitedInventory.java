@@ -5,7 +5,7 @@ import java.util.List;
 public class LimitedInventory extends InfiniteInventory {
   int maxWeight;
 
-  public LimitedInventory(List<Item> items,  int maxWeight) {
+  public LimitedInventory(List<Item> items, int maxWeight) {
     super(items);
     this.maxWeight = maxWeight;
   }

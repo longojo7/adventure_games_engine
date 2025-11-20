@@ -55,7 +55,6 @@ public class GameController implements IGameController {
     displayRoomDescription();
     output.append("\n------------------------------" +
             "\nYour Choice: ");
-
     while (gameRunning && scanner.hasNextLine()) {
       String command = scanner.nextLine().trim();
       if (command.isEmpty()) {
