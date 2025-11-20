@@ -4,7 +4,7 @@ public class Connection {
   private boolean isOpen;
   private final IRoom destination;
 
-  Connection(boolean isOpen, IRoom destination) {
+  public Connection(boolean isOpen, IRoom destination) {
     this.isOpen = isOpen;
     this.destination = destination;
   }
