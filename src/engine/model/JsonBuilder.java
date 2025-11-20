@@ -91,14 +91,38 @@ public class JsonBuilder implements IGameBuilder {
     thresholdMap.put(60, "Tired");
     thresholdMap.put(100, "Awake");
 
-    Player player = new Player(
-            playerName,
-            new ThresholdHealth(100, 100, thresholdMap),
-            new LimitedInventory(new ArrayList<Item>(), 20),
-            rooms.get("1")
-    );
+    Player player;
+
+    if (playerData == null)
+      player = new Player(
+              playerName,
+              new ThresholdHealth(100, 100, thresholdMap),
+              new LimitedInventory(new ArrayList<Item>(), 20),
+              rooms.get("1")
+      );
+    else
+      player = new Player(
+              playerData.get("name") == null ? playerName : playerData.get("name").toString(),
+              new ThresholdHealth(
+                      Integer.parseInt(playerData.get("current_health").toString()),
+                      Integer.parseInt(playerData.get("max_health").toString()),
+                      thresholdMap
+              ),
+              new LimitedInventory(
+                      itemListFromString(playerData.get("items").toString()),
+                      Integer.parseInt(playerData.get("max_weight").toString())
+              ),
+              rooms.get(playerData.get("room_number").toString())
+      );
 
     return new EngineModel(player);
+  }
+
+  private List<Item> itemListFromString(String string) {
+    List<Item> items = new ArrayList<>();
+    for (String itemName : string.split(", "))
+      items.add(ItemFactory.getInstance().getItem(itemName));
+    return items;
   }
 
   private IRoom createRoom(
@@ -119,8 +143,7 @@ public class JsonBuilder implements IGameBuilder {
           fixtures.add(createFixture(fixtureName));
     List<Item> items = new ArrayList<>();
     if (jsonRoom.get("items") != null)
-      for (String itemName : jsonRoom.get("items").toString().split(", "))
-        items.add(ItemFactory.getInstance().getItem(itemName));
+      items = itemListFromString(jsonRoom.get("items").toString());
     IInventory inventory = new InfiniteInventory(items);
     return new Room(
             name,
