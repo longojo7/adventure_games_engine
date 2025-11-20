@@ -9,6 +9,10 @@ import engine.model.rooms.IRoom;
 public interface IPlayer {
   String healthStatus();
 
+  int currentHealth();
+
+  int maxHealth();
+
   void damage(int damage);
 
   void heal(int heal);
