@@ -6,7 +6,7 @@ defaults when game files omit certain pieces. All items loaded from JSON are now
 separates item creation from both the parser and the controller. Player remained our core abstraction and now implements IPlayer; it continues to rely on two additional abstractions,
 IHealth and IInventory, giving us flexibility in how health and inventory systems behave. Our concrete ThresholdHealth supports threshold-based status behavior, while rooms use an
 InfiniteInventory and players use a LimitedInventory with weight constraints. Rooms implement IRoom and contain their own inventory, fixtures, directional connections, and precisely
-one IObstacle. Obstacles consist of both Puzzle and Monster, each validating attempted ISolution objects—either an ItemSolution or PasswordSolution—and updating their solved or
+one IObstacle. Obstacles consist of both Puzzle and Monster, each validating attempted ISolution objects--either an ItemSolution or PasswordSolution--and updating their solved or
 defeated state. To support dynamic behavior without tightly coupling classes together, Puzzles, Monsters, and ThresholdHealth each use EventHandlers that fire GameEvents when something
 meaningful happens, such as solving a puzzle, defeating a monster, or changing a health threshold; these events allow the model to unlock doors or update room state at the right
 moments. Overall, the model evolved by formalizing interfaces, introducing an event-driven structure, centralizing item creation with the ItemFactory, and supporting fully JSON-driven
