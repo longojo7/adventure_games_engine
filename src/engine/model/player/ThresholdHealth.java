@@ -23,7 +23,7 @@ public class ThresholdHealth implements IHealth {
 
   @Override
   public void damage(int damage) {
-    health -= damage; // added this track player health
+    health -= damage;
     if (damage > health)
       sleep();
   }
