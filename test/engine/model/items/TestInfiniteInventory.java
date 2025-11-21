@@ -1,9 +1,13 @@
 package engine.model.items;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,6 +17,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Test class for the InfiniteInventory class.
  */
 public class TestInfiniteInventory {
+
+  /**
+   * Test setup.
+   * @throws NoSuchFieldException if the items field not found from reflection
+   * @throws IllegalAccessException if reflection fails to set the factory field
+   */
+  @BeforeEach
+  void seedFactory() throws NoSuchFieldException, IllegalAccessException {
+    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 150,
+            1, "A USB storage device.", 1, 1);
+    Item carrot = new Item("carrot", "Carrot", 0, 1,
+            "A fresh carrot.", 1, 1);
+
+    // Seed ItemFactory using reflection
+    Field f = ItemFactory.class.getDeclaredField("items");
+    f.setAccessible(true);
+    Map<String, Item> map = new HashMap<>();
+    map.put("thumb drive", thumbDrive);
+    map.put("carrot", carrot);
+    f.set(ItemFactory.getInstance(), map);
+  }
 
   /**
    * Tests the empty parameter constructor initializes an empty inventory.

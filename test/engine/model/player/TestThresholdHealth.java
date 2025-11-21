@@ -26,6 +26,20 @@ public class TestThresholdHealth {
     assertEquals(100, health.getMaxHealth());
   }
 
+  @Test
+  public void testDamage() {
+    Map<Integer, String> thresholds = Map.of(0, "Sleep", 50, "Tired",
+            75, "Awake");
+    IHealth health = new ThresholdHealth(75, 100, thresholds);
+    assertEquals(75, health.getHealth());
+    assertEquals("Awake", health.getStatus());
+
+    // take damage
+    health.damage(30);
+    assertEquals(45, health.getHealth());
+    assertEquals("Tired", health.getStatus());
+  }
+
   /**
    * Test that damage above health puts a player to sleep and health at 0.
    */
@@ -95,7 +109,7 @@ public class TestThresholdHealth {
     assertEquals( "WOOZY", healthWoozy.getStatus());
     IHealth healthFatigued = new ThresholdHealth(55, 100, thresholds);
     assertEquals("FATIGUED", healthFatigued.getStatus());
-    IHealth healthAwake = new ThresholdHealth(90, 100, thresholds);
+    IHealth healthAwake = new ThresholdHealth(100, 100, thresholds);
     assertEquals("AWAKE", healthAwake.getStatus());
   }
 }

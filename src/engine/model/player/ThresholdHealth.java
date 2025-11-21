@@ -23,6 +23,7 @@ public class ThresholdHealth implements IHealth {
 
   @Override
   public void damage(int damage) {
+    health -= damage;
     if (damage > health)
       sleep();
   }
