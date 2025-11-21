@@ -1,41 +1,19 @@
 # Adventure Game Engine (Model, Controller, and Parser)
 
-At this level of the project, we implemented a JSON parser for our data to fit our model, and we
-also connected a controller that communicates with the model, which the user can
-interact with. We now support loading in-game data from valid JSON files and improper game files
-that omit certain aspects. We now construct items loaded from the JSON into a
-dedicated factory, which the Item class uses to call particular items. Lastly, we have an
-interactive game controller that users can use to play the game in the command line or with a 
-string.
+At this level of the project, we expanded our engine from HW7 by introducing a full JSON-based game loader, a centralized item factory, an event system, and a more interactive
+controller. The JSON parser now reads structured game data. It uses the IGameBuilder to construct rooms, obstacles, items, inventories, health objects, and connections, filling in
+defaults when game files omit certain pieces. All items loaded from JSON are now built and stored in a dedicated ItemFactory, which keeps a consistent mapping from IDs to Items and
+separates item creation from both the parser and the controller. Player remained our core abstraction and now implements IPlayer; it continues to rely on two additional abstractions,
+IHealth and IInventory, giving us flexibility in how health and inventory systems behave. Our concrete ThresholdHealth supports threshold-based status behavior, while rooms use an
+InfiniteInventory and players use a LimitedInventory with weight constraints. Rooms implement IRoom and contain their own inventory, fixtures, directional connections, and precisely
+one IObstacle. Obstacles consist of both Puzzle and Monster, each validating attempted ISolution objects—either an ItemSolution or PasswordSolution—and updating their solved or
+defeated state. To support dynamic behavior without tightly coupling classes together, Puzzles, Monsters, and ThresholdHealth each use EventHandlers that fire GameEvents when something
+meaningful happens, such as solving a puzzle, defeating a monster, or changing a health threshold; these events allow the model to unlock doors or update room state at the right
+moments. Overall, the model evolved by formalizing interfaces, introducing an event-driven structure, centralizing item creation with the ItemFactory, and supporting fully JSON-driven
+game construction, and providing a controller that parses user commands and forwards them to the engine model for execution.
 
-Player remained as our first and central abstraction, since it has its own data and behaviors. Giving it its own supertype will also allow for future or alternate versions of the
-player (NPCs, etc.), hence the IPlayer interface. A player has to other key abstractiosn in our model. We made IHealth its own interface and Player has an IHealth. This way, how
-Health is handled could be changed in different circumstances or updated in the future. Our concrete implementation is the ThresholdHealth class which allows health behavior to vary
-without modifying the Player class. 
+## Updated Textual Scenarios
 
-Player still has an IInventory. IInventory is our interface for storing and transferring items.
-Rooms and Players both use them, although they use different implementations. Rooms use an 
-InfiniteInventory does not care about the weight of Items, while the Player’s inventory is 
-weight-constrained through our LimitedInventory class. 
+1. Our game engine creates a Room r1 that represents a treasury room in a castle with an InfiniteInventory. Inside r1, there are two obstacles: one is a locked chest, which is a Puzzle, and the other is a Monster m1 guarding the exit of r1. There is a Player object named William, which is created with a maxHealth object h1 that has a max health of 100. Additionally, William has a LimitedInventory with only one Item, a “silver key”. When William walks into the room, he explores it, finding both the locked chest Puzzle and the m1 blocking the exit of the treasury room. William knows that the only way out may be in the locked chest, so he attempts to open it. He presents an ItemSolution, which is the “silver key” item from his inventory, to the Puzzle. The Puzzle then checks the unique ID of the key against its internal correctSolution. Once it verifies that the “silver key” is a match, it updates its isSolved state and triggers any registered EventHandler objects. This opens the chest, and William picks up the Item, which is a “bronze sword”. This Item is transferred from r1’s InfiniteInventory into William’s LimitedInventory. William goes over to the exit of the room and uses the sword to battle the Monster m1. The Player submits an ItemSolution representing the “bronze sword” to the m1’s solution-checking logic. The m1 then checks the provided solution, validates it, and marks the Monster as defeated, which triggers its EventHandlers to clear the exit, allowing William to exit the room if he chooses.
 
-IRoom is implemented by Room, which includes its own InfiniteInventory and references to
-Obstacles and Connections. Connections are how Rooms connect to each other. They also track if
-they are open or closed so that Connections can be “unlocked” by actions in the game. IObstacle
-is the protocol for Puzzles and Monsters. It has methods for affecting rooms and being solved.
-IObstacles also use an observer pattern, where SolveListeners can be notified when a Puzzle is
-solved. Monsters are like Puzzles, but with the added functionality of damaging the player.
-ISolution allows for multiple types of solutions, in our case, ItemSolution and 
-PasswordSolution, which can check a potential solution against theirs.
-
-We added a full JSON parser that loads data--rooms, items, puzzles, monsters--and constructs
-the model using the IGameBuilder abstraction. The parser reads structured JSON and delegates
-object creation to factories. The builder creates all the rooms, obstacles, health, inventory,
-etc., and wires everything up.
-
-The Item Factory is responsible for producing Item objects based on their IDs which allows these
-items to evolve without changing parsing logic or controller code. The model interacts with
-items through the factory. 
-
-We added a GameController (with an accompanying interface to allow future variations). The
-controller reads user input, parses commands, and forwards those commands to the IEngineModel.
-It then prints the model’s responses, acting as the bridge between the user and the game logic.
+2. Our game engine creates two Room objects: r2, representing a bedroom, and r3, representing a secret office connected to the bedroom by a locked door. The r2 has a fixture, which is a bookshelf to the right of the locked door. The door lock is a Puzzle object that uses a PasswordSolution rather than an ItemSolution. A Player object, Anna p2, walks into r2 with a LimitedInventory that contains nothing, then picks up a note Item, which has a clue to the door’s password. This password is an immovable object containing words and knowledge. When Anna inspects the door, she discovers a lock that can only be unlocked if the right word is input. The Puzzle prompts a PasswordSolution, and Anna puts it in “bookshelf”. The Puzzle compares the provided string with its internal correctSolution. It then verifies a match and updates its isSolved state to true, which activates its EventHandlers. One EventHandler updates the Connection object’s isOpen attribute to true, which unlocks the door. The Room r2 then updates its internal state to reflect the open Connection, and Anna walks into r3, which changes her currentRoom reference to r3.
