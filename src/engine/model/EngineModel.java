@@ -39,8 +39,12 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String getPlayerRank() {
-    // TODO: Need to add player rank functionality in the model
-    return "";
+    if (getPlayerScore() >= 50) {
+      return "MASTER";
+    } else if (getPlayerScore() >= 100) {
+      return "SKILLED";
+    }
+    return "NOVICE";
   }
 
   @Override
@@ -132,6 +136,19 @@ public class EngineModel implements IEngineModel {
       return null;
     Monster monster = (Monster) player.getCurrentRoom().getObstacle();
     return monster.getAttack();
+  }
+
+  @Override
+  public int dealDamage() {
+
+    if (player.getCurrentRoom().getObstacle() instanceof Monster && player.getCurrentRoom().getObstacle().isActive())
+      player.damage(((Monster)(player.getCurrentRoom().getObstacle())).getDamage());
+    return ((Monster)(player.getCurrentRoom().getObstacle())).getDamage();
+  }
+
+  @Override
+  public boolean roomObstacleActive() {
+    return player.getCurrentRoom().getObstacle()!=null && player.getCurrentRoom().getObstacle().isActive();
   }
 
   @Override

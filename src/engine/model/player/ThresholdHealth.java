@@ -24,6 +24,7 @@ public class ThresholdHealth implements IHealth {
   @Override
   public void damage(int damage) {
     health -= damage;
+
     if (damage > health)
       sleep();
   }
@@ -59,8 +60,8 @@ public class ThresholdHealth implements IHealth {
     keys.sort(Integer::compareTo);
 
     // had to update this method to handle if health is 0 or below
-    if (health <= keys.getFirst()) {
-      return thresholds.get(keys.getFirst());
+    if (health <= keys.get(0)) {
+      return thresholds.get(keys.get(0));
     }
 
     // then loop through the keys to and see if health is less than and return thresh if so
@@ -70,7 +71,7 @@ public class ThresholdHealth implements IHealth {
       }
     }
     // return last key if health is greater than all keys
-    return thresholds.get(keys.getLast());
+    return thresholds.get(keys.get(keys.size() - 1));
   }
 
   @Override

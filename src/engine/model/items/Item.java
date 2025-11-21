@@ -59,11 +59,9 @@ public class Item {
     this.usesRemaining = usesRemaining;
   }
 
-  public static Item fromID(String id) throws IllegalArgumentException {
+  public static Item fromID(String id)  {
     Item item = ItemFactory.getInstance().getItem(id);
-    if (item == null) {
-      throw new IllegalArgumentException("Item with id " + id + " does not exist");
-    }
+
     return item;
   }
 

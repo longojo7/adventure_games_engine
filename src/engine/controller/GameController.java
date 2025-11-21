@@ -1,22 +1,26 @@
 package engine.controller;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Scanner;
 
 import engine.Direction;
 import engine.model.IEngineModel;
+import engine.model.JsonBuilder;
 
 /**
  * Controller for the adventure game engine.
  * Handles user input, command parsing, and interaction with the game model.
  */
 public class GameController implements IGameController {
-  private final IEngineModel model;
+  private IEngineModel model;
+  private JsonBuilder jsonBuilder;
   private final Readable input;
   private final Appendable output;
   private boolean gameRunning;
   private String savedState;
+
 
   /**
    * Constructs a new GameController.
@@ -24,7 +28,7 @@ public class GameController implements IGameController {
    * @param input  the source of user input.
    * @param output the destination for game output.
    */
-  public GameController(IEngineModel model, Readable input, Appendable output) {
+  public GameController(IEngineModel model, JsonBuilder jsonBuilder, Readable input, Appendable output) {
     if (model == null || input == null || output == null) {
       throw new IllegalArgumentException("Model, input, and output cannot be null");
     }
@@ -33,6 +37,7 @@ public class GameController implements IGameController {
     this.output = output;
     this.gameRunning = false;
     this.savedState = null;
+    this.jsonBuilder = jsonBuilder;
   }
 
   /**
@@ -92,8 +97,14 @@ public class GameController implements IGameController {
   private void displayRoomDescription() throws IOException {
     output.append(model.environmentDescription()).append("\n");
     String monsterAttack = model.monsterAttack();
-    if (monsterAttack != null) {
-      output.append(monsterAttack);
+    if (monsterAttack != null && model.roomObstacleActive()) {
+      model.dealDamage();
+      output.append( model.getPlayerName() + " Takes " + model.dealDamage() + " Damage");
+      if (model.playerStatus().equals("Asleep")){
+        output.append("\nYou have Fallen Asleep. ");
+        handleQuit();
+        return;
+      }
     }
     displayAvailableExits();
     displayRoomItems();
@@ -147,6 +158,7 @@ public class GameController implements IGameController {
       case "N":
       case "NORTH":
         handleMove(Direction.North);
+
         break;
       case "S":
       case "SOUTH":
@@ -287,7 +299,7 @@ public class GameController implements IGameController {
    */
   private void handleLook() throws IOException {
     output.append("\nYou are standing in the ").append(model.roomName()).append("\n");
-    displayRoomDescription();
+       displayRoomDescription();
   }
 
   /**
@@ -400,8 +412,7 @@ public class GameController implements IGameController {
    * @return a string representation of the game state.
    */
   private String captureGameState() {
-    // This is a placeholder.
-    return model.roomName() + "|" + String.join(",", model.playerItemList());
+    return jsonBuilder.exportModel(model);
   }
 
   /**
@@ -409,6 +420,14 @@ public class GameController implements IGameController {
    * @param state the saved state to restore.
    */
   private void restoreGameState(String state) {
-    // For now, this is a no-op as we would need the model to support state restoration.
+    if (state == null || state.isEmpty()) {
+      return;
+    }
+   jsonBuilder = new JsonBuilder(new StringReader(state));
+    try {
+      model = jsonBuilder.createModel(model.getPlayerName());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

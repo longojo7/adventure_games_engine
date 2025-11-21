@@ -18,6 +18,9 @@ public class InfiniteInventory implements IInventory {
 
   @Override
   public boolean takeFrom(IInventory inventory, String id) {
+    if (Item.fromID(id) == null) {
+      return false;
+    }
     if (!inventory.hasItem(id)) return false;
     inventory.removeItem(id);
     addItem(id);
@@ -33,7 +36,12 @@ public class InfiniteInventory implements IInventory {
 
   @Override
   public List<Item> getItems() {
+    if (items == null) {
+
+      return new ArrayList<>();
+    }
     return List.copyOf(items);
+
   }
 
   @Override

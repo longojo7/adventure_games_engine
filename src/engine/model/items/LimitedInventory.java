@@ -25,6 +25,9 @@ public class LimitedInventory extends InfiniteInventory {
 
   @Override
   public boolean takeFrom(IInventory inventory, String id) {
+    if (Item.fromID(id) == null) {
+      return false;
+    }
     if(currentWeight() + Item.fromID(id).getWeight() > maxWeight) return false;
     return super.takeFrom(inventory, id);
   }

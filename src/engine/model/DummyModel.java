@@ -143,6 +143,16 @@ public class DummyModel implements IEngineModel {
   }
 
   @Override
+  public int dealDamage() {
+    return 0;
+  }
+
+  @Override
+  public boolean roomObstacleActive() {
+    return false;
+  }
+
+  @Override
   public Player getPlayer() {
     return null;
   }

@@ -149,7 +149,7 @@ public class JsonBuilder implements IGameBuilder {
     for (String key : rooms.keySet()) {
       if (rooms.get(key) == player.getCurrentRoom())
         newPlayerData.put("room_number", key);
-      if (!rooms.get(key).getObstacle().isActive())
+      if(rooms.get(key).getObstacle() != null && !rooms.get(key).getObstacle().isActive())
         solvedRoomNumbers.add(key);
     }
     newPlayerData.put("solved_rooms", listToString(solvedRoomNumbers));
@@ -164,6 +164,9 @@ public class JsonBuilder implements IGameBuilder {
 
   private List<Item> itemListFromString(String string) {
     List<Item> items = new ArrayList<>();
+    if (string.isEmpty()) {
+      return items;
+    }
     for (String itemName : string.split(", "))
       items.add(ItemFactory.getInstance().getItem(itemName));
     return items;
@@ -222,6 +225,7 @@ public class JsonBuilder implements IGameBuilder {
   }
 
   private Puzzle createPuzzle(String puzzleName) throws Exception {
+    puzzleName = puzzleName.toUpperCase();
     if (jsonObstacles.get(puzzleName) == null)
       throw new Exception("Invalid JSON: Puzzle " + puzzleName + " does not exist.");
     JSONObject jsonPuzzle = jsonObstacles.get(puzzleName);

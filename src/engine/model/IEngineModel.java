@@ -42,6 +42,10 @@ public interface IEngineModel {
 
   String monsterAttack();
 
+  int dealDamage();
+
+  boolean roomObstacleActive();
+
   Player getPlayer();
 
   Map<String, IRoom> getRooms();

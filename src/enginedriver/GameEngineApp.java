@@ -4,7 +4,10 @@ import engine.controller.GameController;
 import engine.controller.IGameController;
 import engine.model.DummyModel;
 import engine.model.IEngineModel;
+import engine.model.JsonBuilder;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -46,7 +49,18 @@ public class GameEngineApp {
     // This would involve parsing the JSON file and constructing the proper model.
     model = createModel(gameFileName);
 
-    controller = new GameController(model, source, output);
+    JsonBuilder builder = null;
+
+    try {
+      builder = new JsonBuilder(new FileReader(gameFileName));
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+  
+  
+    controller = new GameController(model, builder, source, output);
 
     controller.go();
   }
@@ -65,7 +79,16 @@ public class GameEngineApp {
     // 2. Parsing the JSON into game objects (rooms, items, puzzles, etc.)
     // 3. Constructing a proper EngineModel with the loaded data.
     // For now, we use DummyModel as a placeholder.
-    return new DummyModel();
+    JsonBuilder builder;
+
+    try {
+      builder = new JsonBuilder(new FileReader(gameFileName));
+      return builder.createModel("");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
   /**
@@ -80,7 +103,7 @@ public class GameEngineApp {
 //    }
 //
 //    String gameFile = args[0];
-    GameEngineApp app = new GameEngineApp("gameFile", new InputStreamReader(System.in), System.out);
+    GameEngineApp app = new GameEngineApp("data/align_quest_game_elements.json", new InputStreamReader(System.in), System.out);
 
     try {
       app.start();
