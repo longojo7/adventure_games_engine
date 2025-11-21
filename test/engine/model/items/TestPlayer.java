@@ -1,4 +1,4 @@
-package engine.model.player;
+package engine.model.items;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,11 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import engine.Direction;
-import engine.model.items.IInventory;
-import engine.model.items.InfiniteInventory;
-import engine.model.items.Item;
-import engine.model.items.ItemFactory;
-import engine.model.items.LimitedInventory;
+import engine.model.player.IHealth;
+import engine.model.player.IPlayer;
+import engine.model.player.Player;
+import engine.model.player.ThresholdHealth;
 import engine.model.rooms.Connection;
 import engine.model.rooms.IRoom;
 import engine.model.rooms.Room;
@@ -46,6 +45,8 @@ public class TestPlayer {
     thresh = Map.of(0, "Sleeping", 50, "Awake");
     health = new ThresholdHealth(100, 100, thresh);
     inv = new LimitedInventory(13);
+    key = new Item("key", "KEY", 10, 1, "A small key",
+            1, 1);
     r1 = new Room("Entrance", "Your standing in the entrance",
             Map.of(), List.of(), null, new InfiniteInventory());
     r2 = new Room("Hallway", "Your standing in the hallway",
