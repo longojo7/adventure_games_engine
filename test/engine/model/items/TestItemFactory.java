@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -59,7 +60,7 @@ public class TestItemFactory {
     ItemFactory.getInstance().itemsFromJson(arr);
     Item lamp = ItemFactory.getInstance().getItem("lamp");
     assertNotNull(lamp);
-    assertEquals("lamp", lamp.getId());
+    assertEquals("lamp", lamp.getName());
     assertEquals(100, lamp.getValue());
   }
 
@@ -67,10 +68,9 @@ public class TestItemFactory {
    * Test that an exception is thrown if the ID doesn't exist.
    */
   @Test
-  void testThrowsIfIDDoesntExist() {
-    assertThrows(IllegalArgumentException.class, () -> Item.fromID("Doesnt_exist"));
+  void testNullIfDoesNotExist() {
+    assertNull(Item.fromName("Doesnt_exist"));
   }
-
 }
 
 

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -24,9 +25,9 @@ public class TestItem {
   @BeforeEach
   public void seedFactory() throws NoSuchFieldException, IllegalAccessException {
     // Construct the items your tests expect
-    Item lamp = new Item("lamp", "Lamp", 100, 3,
+    Item lamp = new Item("Lamp", 100, 3,
             "An old oil lamp with flint to spark.", 100, 20);
-    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 50, 1,
+    Item thumbDrive = new Item("Thumb Drive", 50, 1,
             "A small USB drive.", 1, 1);
 
     // Seed ItemFactory.items map using reflection
@@ -43,8 +44,7 @@ public class TestItem {
    */
   @Test
   void testItemFromID() {
-    Item sword = Item.fromID("lamp");
-    assertEquals("lamp", sword.getId());
+    Item sword = Item.fromName("lamp");
     assertEquals("Lamp", sword.getName());
     assertEquals(100, sword.getValue());
     assertEquals(3, sword.getWeight());
@@ -58,7 +58,7 @@ public class TestItem {
    */
   @Test
   void testUnknownItemIDThrows() {
-    assertThrows(IllegalArgumentException.class, () -> Item.fromID("hair clippers"));
+    assertNull(Item.fromName("hair clippers"));
   }
 
   /**
@@ -66,7 +66,7 @@ public class TestItem {
    */
   @Test
   void testUsesRemainingCanChange() {
-    Item potion = Item.fromID("lamp");
+    Item potion = Item.fromName("lamp");
     assertEquals(20, potion.getUsesRemaining());
     potion.setUsesRemaining(19);
     assertEquals(19, potion.getUsesRemaining());
@@ -77,8 +77,8 @@ public class TestItem {
    */
   @Test
   void testSameID() {
-    Item a = Item.fromID("lamp");
-    Item b = Item.fromID("lamp");
+    Item a = Item.fromName("lamp");
+    Item b = Item.fromName("lamp");
     assertEquals(a, b);
     assertEquals(a.hashCode(), b.hashCode());
   }
@@ -88,8 +88,8 @@ public class TestItem {
    */
   @Test
   void testDifferentID() {
-    Item potion = Item.fromID("lamp");
-    Item sword = Item.fromID("thumb drive");
+    Item potion = Item.fromName("lamp");
+    Item sword = Item.fromName("thumb drive");
     assertNotEquals(potion, sword);
   }
 

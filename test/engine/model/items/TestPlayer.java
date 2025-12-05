@@ -45,7 +45,7 @@ public class TestPlayer {
     thresh = Map.of(0, "Sleeping", 50, "Awake");
     health = new ThresholdHealth(100, 100, thresh);
     inv = new LimitedInventory(13);
-    key = new Item("key", "KEY", 10, 1, "A small key",
+    key = new Item("KEY", 10, 1, "A small key",
             1, 1);
     r1 = new Room("Entrance", "Your standing in the entrance",
             Map.of(), List.of(), null, new InfiniteInventory());
@@ -283,6 +283,6 @@ public class TestPlayer {
     player.pickupItem("key");
     List<Item> items = player.itemsList();
     assertEquals(1, items.size());
-    assertEquals("key", items.get(0).getId());
+    assertEquals("KEY", items.getFirst().getName());
   }
 }

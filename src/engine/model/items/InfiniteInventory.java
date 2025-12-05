@@ -17,13 +17,13 @@ public class InfiniteInventory implements IInventory {
   }
 
   @Override
-  public boolean takeFrom(IInventory inventory, String id) {
-    if (Item.fromID(id) == null) {
+  public boolean takeFrom(IInventory inventory, String name) {
+    if (Item.fromName(name) == null) {
       return false;
     }
-    if (!inventory.hasItem(id)) return false;
-    inventory.removeItem(id);
-    addItem(id);
+    if (!inventory.hasItem(name)) return false;
+    inventory.removeItem(name);
+    addItem(name);
     return true;
   }
 
@@ -37,25 +37,27 @@ public class InfiniteInventory implements IInventory {
   @Override
   public List<Item> getItems() {
     if (items == null) {
-
       return new ArrayList<>();
     }
     return List.copyOf(items);
-
   }
 
   @Override
-  public boolean hasItem(String id) {
-    return items.stream().anyMatch(item -> item.getId().equals(id));
+  public boolean hasItem(String name) {
+    return items.stream().anyMatch(item -> item.getName().equalsIgnoreCase(name));
   }
 
   @Override
-  public boolean addItem(String id) {
-    return items.add(Item.fromID(id));
+  public boolean addItem(String name) {
+    Item item = Item.fromName(name);
+    if (item == null) { return false; }
+    return items.add(item);
   }
 
   @Override
-  public boolean removeItem(String id) {
-    return items.remove(Item.fromID(id));
+  public boolean removeItem(String name) {
+    Item item = Item.fromName(name);
+    if (item == null) { return false; }
+    return items.remove(item);
   }
 }

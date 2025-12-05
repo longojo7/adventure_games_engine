@@ -30,7 +30,7 @@ public interface IEngineModel {
 
   String examine(String target);
 
-  boolean useItem(String itemName);
+  String useItem(String itemName);
 
   boolean answerQuestion(String answer);
 

@@ -21,7 +21,7 @@ public class TestMonster {
    */
   @Test
   public void testMonsterGetters() {
-    Item lamp = Item.fromID("lamp");
+    Item lamp = Item.fromName("lamp");
     List<Item> items = new ArrayList<>();
     items.add(lamp);
     ISolution solution = new ItemSolution(items);
@@ -37,7 +37,7 @@ public class TestMonster {
    */
   @Test
   public void MonsterCanSolve() {
-    Item lamp = Item.fromID("lamp");
+    Item lamp = Item.fromName("lamp");
     List<Item> items = new ArrayList<>();
     items.add(lamp);
     ISolution solution = new ItemSolution(items);
