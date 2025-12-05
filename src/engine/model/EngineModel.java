@@ -1,6 +1,6 @@
 package engine.model;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 import engine.Direction;
 import engine.model.items.Item;
 import engine.model.player.Player;
-import engine.model.rooms.Fixture;
 import engine.model.rooms.IRoom;
-import engine.model.rooms.obstacles.IObstacle;
 import engine.model.rooms.obstacles.ItemSolution;
 import engine.model.rooms.obstacles.Monster;
 import engine.model.rooms.obstacles.PasswordSolution;
