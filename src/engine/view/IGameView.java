@@ -1,13 +1,14 @@
 package engine.view;
 
-import engine.GameState;
-import engine.controller.IGameController;
+import java.util.List;
 
 /**
  * Interface for game view.
  */
 public interface IGameView {
   // need to write logic for these methods
-  void set(IGameController gameController);
-  void refresh(GameState gameState);
+  void updateImage(String path);
+  void updateDescription(String description);
+  void updateInventory(List<String> playerInventory, List<String> roomInventory);
+  void updateHealth(String health);
 }

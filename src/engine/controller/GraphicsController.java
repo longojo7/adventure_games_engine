@@ -3,19 +3,16 @@ package engine.controller;
 import java.io.IOException;
 
 import engine.Direction;
-import engine.GameState;
 import engine.model.IEngineModel;
 import engine.view.IGameView;
 
-public class GraphicsController implements GameActions, IGameController {
+public class GraphicsController implements IGameController {
   private IEngineModel model;
   private IGameView view;
 
   public GraphicsController(IEngineModel model, IGameView view) {
     this.model = model;
     this.view = view;
-    view.set(this);
-    view.refresh(model.getGameState());
   }
 
   @Override
