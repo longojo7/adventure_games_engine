@@ -22,18 +22,17 @@ public class ItemFactory {
       JSONObject jsonItem = (JSONObject) object;
       Item item = new Item(
               jsonItem.get("name").toString(),
-              jsonItem.get("name").toString(),
               Integer.parseInt(jsonItem.get("value").toString()),
               Integer.parseInt(jsonItem.get("weight").toString()),
               jsonItem.get("description").toString(),
               Integer.parseInt(jsonItem.get("max_uses").toString()),
               Integer.parseInt(jsonItem.get("uses_remaining").toString())
       );
-      items.put(item.getId(), item);
+      items.put(item.getName().toLowerCase(), item);
     }
   }
 
-  public Item getItem(String id) {
-    return items.get(id);
+  public Item getItem(String name) {
+    return items.get(name.toLowerCase());
   }
 }

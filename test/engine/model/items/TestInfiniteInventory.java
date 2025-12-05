@@ -25,9 +25,9 @@ public class TestInfiniteInventory {
    */
   @BeforeEach
   void seedFactory() throws NoSuchFieldException, IllegalAccessException {
-    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 150,
+    Item thumbDrive = new Item("Thumb Drive", 150,
             1, "A USB storage device.", 1, 1);
-    Item carrot = new Item("carrot", "Carrot", 0, 1,
+    Item carrot = new Item("Carrot", 0, 1,
             "A fresh carrot.", 1, 1);
 
     // Seed ItemFactory using reflection
@@ -53,7 +53,7 @@ public class TestInfiniteInventory {
    */
   @Test
   public void testListConstructor() {
-    Item td = Item.fromID("thumb drive");
+    Item td = Item.fromName("thumb drive");
     List<Item> list = new ArrayList<>(List.of(td));
     IInventory inv = new InfiniteInventory(list);
     assertEquals(1, inv.getItems().size());
@@ -66,10 +66,10 @@ public class TestInfiniteInventory {
    */
   @Test
   public void testDefensiveConstructor() {
-    Item td = Item.fromID("thumb drive");
+    Item td = Item.fromName("thumb drive");
     List<Item> list = new ArrayList<>(List.of(td));
     IInventory inv = new InfiniteInventory(list);
-    list.add(Item.fromID("carrot"));
+    list.add(Item.fromName("carrot"));
     assertEquals(1, inv.getItems().size());
   }
 
@@ -78,8 +78,8 @@ public class TestInfiniteInventory {
    */
   @Test
   public void testTakeItem() {
-    Item drive = Item.fromID("thumb drive");
-    Item carrot = Item.fromID("carrot");
+    Item drive = Item.fromName("thumb drive");
+    Item carrot = Item.fromName("carrot");
     IInventory inv = new InfiniteInventory(new ArrayList<>(List.of(drive)));
     IInventory inv2 = new InfiniteInventory(new ArrayList<>(List.of(carrot)));
     // carrot moves from inv2 to inv
@@ -95,7 +95,7 @@ public class TestInfiniteInventory {
    */
   @Test
   public void testGetters() {
-    Item drive = Item.fromID("thumb drive");
+    Item drive = Item.fromName("thumb drive");
     IInventory inv = new InfiniteInventory(new ArrayList<>(List.of(drive)));
     assertEquals(150, inv.getValue());
     assertEquals(List.of(drive), inv.getItems());
@@ -116,7 +116,7 @@ public class TestInfiniteInventory {
    */
   @Test
   public void testRemoveItem() {
-    Item carrot = Item.fromID("carrot");
+    Item carrot = Item.fromName("carrot");
     IInventory inv = new InfiniteInventory(new  ArrayList<>(List.of(carrot)));
     assertTrue(inv.removeItem("carrot"));
     assertEquals(0, inv.getItems().size());

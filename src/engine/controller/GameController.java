@@ -286,10 +286,10 @@ public class GameController implements IGameController {
     }
 
     String description = model.examine(target);
-    if (description != null) {
-      output.append(description).append("\n");
-    } else {
+    if (description.equals("Nothing")) {
       output.append("You don't see anything named '").append(target).append("' to examine.\n");
+    } else {
+      output.append(description).append("\n");
     }
   }
 
@@ -312,15 +312,15 @@ public class GameController implements IGameController {
       output.append("Use what? Specify an item name.\n");
       return;
     }
-
-    //I figured that displaying room and player status here would cover cases where a player would want to check their-
-    //status so we don't need to hardcode a status check as a command. We could later though.
-    if (model.useItem(itemName)) {
+    String result = model.useItem(itemName);
+    if (result.equals("no item")) {
+      output.append("Cannot use an item you don't have.\n");
+    } else if (result.equals("no use")) {
+      output.append("Cannot use that item here.\n");
+    } else {
       output.append("You used: ").append(itemName).append("\n");
       displayRoomDescription();
       displayPlayerStatus();
-    } else {
-      output.append("Cannot use that item here.\n");
     }
   }
 

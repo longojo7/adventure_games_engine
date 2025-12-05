@@ -19,8 +19,8 @@ public class TestItemSolution {
    */
   @Test
   public void testCheckItemSolutionTrue() {
-    Item lamp = Item.fromID("lamp");
-    Item carrot = Item.fromID("carrot");
+    Item lamp = Item.fromName("lamp");
+    Item carrot = Item.fromName("carrot");
     ISolution s1 = new ItemSolution(List.of(lamp, carrot));
     ISolution s2 = new ItemSolution(List.of(lamp, carrot));
     assertTrue(s1.checkSolution(s2));
@@ -35,7 +35,7 @@ public class TestItemSolution {
    */
   @Test
   public void testCheckSolutionFalse() {
-    Item lamp = Item.fromID("lamp");
+    Item lamp = Item.fromName("lamp");
     ISolution item = new ItemSolution(List.of(lamp));
     ISolution password = new PasswordSolution("'password'");
     assertFalse(item.checkSolution(password));
@@ -46,8 +46,8 @@ public class TestItemSolution {
    */
   @Test
   public void testCheckSolutionDifferentSize() {
-    Item lamp = Item.fromID("lamp");
-    Item carrot = Item.fromID("carrot");
+    Item lamp = Item.fromName("lamp");
+    Item carrot = Item.fromName("carrot");
     ISolution s1 = new ItemSolution(List.of(lamp, carrot));
     ISolution s2 = new ItemSolution(List.of(lamp));
     assertFalse(s1.checkSolution(s2));
@@ -58,8 +58,8 @@ public class TestItemSolution {
    */
   @Test
   public void testCheckSolutionDifferentItems() {
-    Item lamp = Item.fromID("lamp");
-    Item carrot = Item.fromID("carrot");
+    Item lamp = Item.fromName("lamp");
+    Item carrot = Item.fromName("carrot");
     ISolution s1 = new ItemSolution(List.of(lamp));
     ISolution s2 = new ItemSolution(List.of(carrot));
     assertFalse(s1.checkSolution(s2));

@@ -113,8 +113,12 @@ public class DummyModel implements IEngineModel {
   }
 
   @Override
-  public boolean useItem(String itemName) {
-    return itemName.equals("KEY_ITEM");
+  public String useItem(String itemName) {
+    if (itemName.equals("KEY_ITEM")) {
+      return "Success";
+    } else {
+      return "Cannot use here";
+    }
   }
 
   @Override

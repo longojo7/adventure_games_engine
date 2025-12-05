@@ -126,8 +126,8 @@ public class JsonBuilder implements IGameBuilder {
       }
       for (IRoom room : rooms.values()) {
         for (Item item : player.itemsList())
-          if (room.getInventory().hasItem(item.getId()))
-            room.getInventory().removeItem(item.getId());
+          if (room.getInventory().hasItem(item.getName()))
+            room.getInventory().removeItem(item.getName());
         for (String solvedRoom : playerData.get("solved_rooms").toString().split(", "))
           if (rooms.get(solvedRoom) == room)
             room.getObstacle().forceSolve();
@@ -142,8 +142,8 @@ public class JsonBuilder implements IGameBuilder {
     newPlayerData.put("name", player.getName());
     newPlayerData.put("current_health", player.currentHealth());
     newPlayerData.put("max_health", player.maxHealth());
-    newPlayerData.put("items", listToString(
-            player.itemsList().stream().map(item -> item.getId()).collect(Collectors.toList())
+    newPlayerData.put("items", listToString(player.itemsList().stream()
+            .map(item -> item.getName()).collect(Collectors.toList())
     ));
     List<String> solvedRoomNumbers = new ArrayList<>();
     for (String key : rooms.keySet()) {

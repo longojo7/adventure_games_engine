@@ -3,7 +3,6 @@ package engine.model.items;
 import java.util.Objects;
 
 public class Item {
-  private String id;
   private String name;
   private int value;
   private int weight;
@@ -11,24 +10,18 @@ public class Item {
   private int maxUses;
   private int usesRemaining;
 
-  protected Item(String id,
-                 String name,
+  protected Item(String name,
                  int value,
                  int weight,
                  String description,
                  int maxUses,
                  int usesRemaining) {
-    this.id = id;
     this.name = name;
     this.value = value;
     this.weight = weight;
     this.description = description;
     this.maxUses = maxUses;
     this.usesRemaining = usesRemaining;
-  }
-
-  public String getId() {
-    return id;
   }
 
   public String getName() {
@@ -59,9 +52,8 @@ public class Item {
     this.usesRemaining = usesRemaining;
   }
 
-  public static Item fromID(String id)  {
-    Item item = ItemFactory.getInstance().getItem(id);
-
+  public static Item fromName(String name)  {
+    Item item = ItemFactory.getInstance().getItem(name);
     return item;
   }
 
@@ -69,11 +61,11 @@ public class Item {
   public boolean equals(Object o) {
     if (!(o instanceof Item)) return false;
     Item item = (Item) o;
-    return Objects.equals(id, item.id);
+    return Objects.equals(name, item.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(id);
+    return Objects.hashCode(name);
   }
 }

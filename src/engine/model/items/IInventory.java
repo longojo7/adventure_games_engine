@@ -3,15 +3,15 @@ package engine.model.items;
 import java.util.List;
 
 public interface IInventory {
-  boolean takeFrom(IInventory inventory, String id);
+  boolean takeFrom(IInventory inventory, String name);
 
   int getValue();
 
   List<Item> getItems();
 
-  boolean hasItem(String id);
+  boolean hasItem(String name);
 
-  boolean addItem(String id);
+  boolean addItem(String name);
 
-  boolean removeItem(String id);
+  boolean removeItem(String name);
 }

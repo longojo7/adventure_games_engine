@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import engine.Direction;
 import engine.model.items.Item;
 import engine.model.player.Player;
+import engine.model.rooms.Fixture;
 import engine.model.rooms.IRoom;
+import engine.model.rooms.obstacles.IObstacle;
 import engine.model.rooms.obstacles.ItemSolution;
 import engine.model.rooms.obstacles.Monster;
 import engine.model.rooms.obstacles.PasswordSolution;
@@ -84,27 +86,29 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String examine(String target) {
-    if (player.hasItem(target))
-      return Item.fromID(target).getDescription();
-    else if (player.getCurrentRoom().getObstacle().getName().equals(target))
+    if (player.getCurrentRoom().getInventory().hasItem(target)) {
+      return Item.fromName(target).getDescription();
+    } else if (player.getCurrentRoom().getObstacle() != null
+            && player.getCurrentRoom().getObstacle().getName().equalsIgnoreCase(target)) {
       return player.getCurrentRoom().getObstacle().getDescription();
-    else if (player.getCurrentRoom().getFixtures()
-            .stream().anyMatch(x -> x.getName().equals(target)))
+    } else if (player.getCurrentRoom().getFixtures()
+            .stream().anyMatch(x -> x.getName().equalsIgnoreCase(target)))
       return player.getCurrentRoom().getFixtures()
-              .stream().filter(x -> x.getName().equals(target))
+              .stream().filter(x -> x.getName().equalsIgnoreCase(target))
               .findFirst().get().getDescription();
     else
-      return null;
+      return "Nothing";
   }
 
   @Override
-  public boolean useItem(String itemName) {
-    ItemSolution solution = new ItemSolution(List.of(Item.fromID(itemName)));
-    if (!player.hasItem(itemName)
-            || !player.getCurrentRoom().getObstacle().attemptSolution(solution))
-      return false;
+  public String useItem(String itemName) {
+    Item item = Item.fromName(itemName);
+    if (item == null || !player.hasItem(itemName)) {return "no item";}
+    ItemSolution solution = new ItemSolution(List.of(Item.fromName(itemName)));
+    if (player.getCurrentRoom().getObstacle() == null
+            || !player.getCurrentRoom().getObstacle().attemptSolution(solution)) {return "no use";}
     takeDamage();
-    return true;
+    return "can use";
   }
 
   @Override

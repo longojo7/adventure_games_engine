@@ -24,11 +24,11 @@ public class TestLimitedInventory {
    */
   @BeforeEach
   void seedFactory() throws NoSuchFieldException, IllegalAccessException {
-    Item thumbDrive = new Item("thumb drive", "Thumb Drive", 150,
+    Item thumbDrive = new Item("Thumb Drive", 150,
             1, "A USB storage device.", 1, 1);
-    Item carrot = new Item("carrot", "Carrot", 0, 10,
+    Item carrot = new Item("Carrot", 0, 10,
             "A fresh carrot.", 1, 1);
-    Item lamp = new Item("lamp", "Lamp", 100, 3,
+    Item lamp = new Item("Lamp", 100, 3,
             "An old oil lamp with flint to spark.", 100, 20);
 
     // Seed ItemFactory using reflection
@@ -65,8 +65,8 @@ public class TestLimitedInventory {
    */
   @Test
   public void testTakeFromBelowMax() {
-    Item drive = Item.fromID("thumb drive");
-    Item carrot = Item.fromID("carrot");
+    Item drive = Item.fromName("thumb drive");
+    Item carrot = Item.fromName("carrot");
     LimitedInventory limited = new LimitedInventory(List.of(drive), 13);
     IInventory source = new InfiniteInventory(List.of(carrot));
     assertTrue(limited.takeFrom(source, "carrot"));
@@ -79,10 +79,10 @@ public class TestLimitedInventory {
    */
   @Test
   public void testTakeFromAboveMax() {
-    Item carrot = Item.fromID("carrot");
+    Item carrot = Item.fromName("carrot");
     LimitedInventory limited = new LimitedInventory(List.of(carrot), 13);
     limited.addItem("lamp");
-    Item drive = Item.fromID("thumb drive");
+    Item drive = Item.fromName("thumb drive");
     IInventory source = new InfiniteInventory(List.of(drive));
     assertFalse(limited.takeFrom(source, "thumb drive"));
     assertEquals(2, limited.getItems().size());
@@ -91,8 +91,8 @@ public class TestLimitedInventory {
 
   @Test
   void testCurrentWeightCalculation() {
-    Item sword = Item.fromID("thumb drive");
-    Item carrot = Item.fromID("carrot");
+    Item sword = Item.fromName("thumb drive");
+    Item carrot = Item.fromName("carrot");
     LimitedInventory limited = new LimitedInventory(List.of(sword, carrot), 13);
     int weightTotal = sword.getWeight() + carrot.getWeight();
     assertEquals(weightTotal, limited.getItems().stream().mapToInt(Item::getWeight).sum());
