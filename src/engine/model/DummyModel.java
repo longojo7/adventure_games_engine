@@ -7,7 +7,7 @@ import engine.Direction;
 import engine.model.player.Player;
 import engine.model.rooms.IRoom;
 
-public class DummyModel /** implements IEngineModel */ {
+public class DummyModel implements IEngineModel {
   private String name;
   private int score = 0;
   private int westStepsTaken;
