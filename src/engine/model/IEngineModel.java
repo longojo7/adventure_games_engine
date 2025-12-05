@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import engine.Direction;
+import engine.GameState;
 import engine.model.player.Player;
 import engine.model.rooms.IRoom;
 
@@ -49,4 +50,8 @@ public interface IEngineModel {
   Player getPlayer();
 
   Map<String, IRoom> getRooms();
+
+  Map<Direction, String> findExits();
+
+  GameState getGameState();
 }

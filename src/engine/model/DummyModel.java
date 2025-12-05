@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import engine.Direction;
+import engine.GameState;
 import engine.model.player.Player;
 import engine.model.rooms.IRoom;
 
@@ -164,5 +165,15 @@ public class DummyModel implements IEngineModel {
   @Override
   public Map<String, IRoom> getRooms() {
     return Map.of();
+  }
+
+  @Override
+  public Map<Direction, String> findExits() {
+    return Map.of();
+  }
+
+  @Override
+  public GameState getGameState() {
+    return null;
   }
 }
