@@ -27,6 +27,8 @@ public class GameView extends JFrame implements IGameView {
   private JTextArea descriptionText;
   private ImageIcon roomIcon;
   private JTextField answer;
+  private JLabel score;
+  private JLabel rank;
 
   public GameView(String caption) {
     super(caption);
@@ -183,22 +185,36 @@ public class GameView extends JFrame implements IGameView {
 
   @Override
   public void updateImage(String path) {
-
+    ImageIcon image = new ImageIcon(path);
+    this.view.setIcon(image);
+    this.view.repaint();
+    this.view.revalidate();
   }
 
   @Override
   public void updateDescription(String description) {
-
+    this.descriptionText.setText(description);
   }
 
   @Override
   public void updateInventory(List<String> playerInventory, List<String> roomInventory) {
-
+    this.playerInventoryList.setListData(playerInventory.toArray(new String[0]));
+    this.roomInventoryList.setListData(roomInventory.toArray(new String[0]));
   }
 
   @Override
   public void updateHealth(String health) {
+    this.playerStatus.setText(health);
+  }
 
+  @Override
+  public void updateScore(String score) {
+    this.score.setText(score);
+  }
+
+  @Override
+  public void updateRank(String rank) {
+    this.rank.setText(rank);
   }
 
   public JMenuBar buildMenu() {
