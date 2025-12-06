@@ -1,5 +1,6 @@
 package engine.view;
 
+import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -11,4 +12,16 @@ public interface IGameView {
   void updateDescription(String description);
   void updateInventory(List<String> playerInventory, List<String> roomInventory);
   void updateHealth(String health);
+
+  void updateFeedback(String feedback);
+
+  String getAnswer();
+
+  String selectedItemPlayer();
+
+  String selectedItemRoom();
+
+  void addActionListener(ActionListener listener);
+
+  void display();
 }

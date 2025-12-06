@@ -1,7 +1,7 @@
 package engine.view;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.*;
@@ -215,6 +215,11 @@ public class GameView extends JFrame implements IGameView {
 
   }
 
+  @Override
+  public void updateFeedback(String feedback) {
+
+  }
+
   public JMenuBar buildMenu() {
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
@@ -234,6 +239,44 @@ public class GameView extends JFrame implements IGameView {
             System.exit(0));
     menuBar.add(menu);
     return menuBar;
+  }
+
+  @Override
+  public String getAnswer() {
+    return answerField.getText();
+  }
+
+  @Override
+  public String selectedItemPlayer() {
+    if(playerInventoryList.isSelectionEmpty())
+      return "";
+    return playerInventoryList.getSelectedValue().toString();
+  }
+
+  @Override
+  public String selectedItemRoom() {
+    if(roomInventoryList.isSelectionEmpty())
+      return "";
+    return roomInventoryList.getSelectedValue().toString();
+  }
+
+  @Override
+  public void addActionListener(ActionListener listener) {
+    this.btnNorth.addActionListener(listener);
+    this.btnSouth.addActionListener(listener);
+    this.btnEast.addActionListener(listener);
+    this.btnWest.addActionListener(listener);
+    this.btnExamineRoom.addActionListener(listener);
+    this.btnTake.addActionListener(listener);
+    this.btnExaminePlayer.addActionListener(listener);
+    this.btnDrop.addActionListener(listener);
+    this.btnUse.addActionListener(listener);
+    this.btnAnswer.addActionListener(listener);
+  }
+
+  @Override
+  public void display() {
+    setVisible(true);
   }
 
   public static void main(String[] args) {

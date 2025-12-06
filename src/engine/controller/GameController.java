@@ -1,7 +1,11 @@
 package engine.controller;
 
+import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,6 +18,7 @@ import engine.model.JsonBuilder;
  * Handles user input, command parsing, and interaction with the game model.
  */
 public class GameController implements IGameController {
+  private static final String saveFile = "savegame.json";
   private IEngineModel model;
   private JsonBuilder jsonBuilder;
   private final Readable input;
@@ -364,9 +369,16 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void handleSave() throws IOException {
-    // Save current game state
+    // Save current game state to memory
     savedState = captureGameState();
-    output.append("Game saved successfully.\n");
+    // Saves to file
+    try (FileWriter writer = new FileWriter(saveFile)) {
+      writer.write(savedState);
+      output.append("Game saved successfully to ").append(saveFile).append(".\n");
+    } catch (IOException e) {
+      output.append("Error saving game to file: ").append(e.getMessage()).append("\n");
+      throw e;
+    }
   }
 
   /**
@@ -374,12 +386,27 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void handleRestore() throws IOException {
-    if (savedState == null) {
-      output.append("No saved game found. Please save a game first.\n");
-      return;
+    String stateToRestore = null;
+
+    // load from file
+    if (Files.exists(Paths.get(saveFile))) {
+      try {
+        stateToRestore = new String(Files.readAllBytes(Paths.get(saveFile)));
+        output.append("Loading saved game from ").append(saveFile).append("...\n");
+      } catch (IOException e) {
+        output.append("Error reading save file: ").append(e.getMessage()).append("\n");
+      }
+    }
+    // Loads save from memory
+    if (stateToRestore == null) {
+      if (savedState == null) {
+        output.append("No saved game found. Please save a game first.\n");
+        return;
+      }
+      stateToRestore = savedState;
     }
 
-    restoreGameState(savedState);
+    restoreGameState(stateToRestore);
     output.append("Game restored successfully.\n");
     displayRoomDescription();
   }
@@ -418,16 +445,18 @@ public class GameController implements IGameController {
   /**
    * Restores a previously saved game state.
    * @param state the saved state to restore.
+   * @throws IOException if an I/O error occurs.
    */
-  private void restoreGameState(String state) {
+  private void restoreGameState(String state) throws IOException {
     if (state == null || state.isEmpty()) {
       return;
     }
-   jsonBuilder = new JsonBuilder(new StringReader(state));
+    jsonBuilder = new JsonBuilder(new StringReader(state));
     try {
       model = jsonBuilder.createModel(model.getPlayerName());
     } catch (Exception e) {
-      e.printStackTrace();
+      output.append("Error restoring game: ").append(e.getMessage()).append("\n");
+      throw new IOException("Failed to restore game state", e);
     }
   }
 }
