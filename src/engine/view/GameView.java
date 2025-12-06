@@ -34,10 +34,13 @@ public class GameView extends JFrame implements IGameView {
   public GameView(String caption) {
     super(caption);
     setSize(1200, 800);
-    setLocation(200, 200);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setLayout(new BorderLayout());
+    this.buildView();
+    this.setJMenuBar(this.buildMenu());
+  }
 
+  private void buildView() {
     // LEFT PANEL
     JPanel leftPanel = new JPanel(new BorderLayout());
     leftPanel.setPreferredSize(new Dimension(600, getHeight()));
@@ -194,15 +197,50 @@ public class GameView extends JFrame implements IGameView {
 
     // add right panel to frame
     this.add(rightPanel, BorderLayout.EAST);
-    this.setJMenuBar(this.buildMenu());
+  }
+
+  public JMenuBar buildMenu() {
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu("File");
+    JMenuItem about = new JMenuItem("About the Engine...");
+    JMenuItem save = new JMenuItem("Save Game");
+    JMenuItem reload = new JMenuItem("Reload Game");
+    JMenuItem exit = new JMenuItem("Exit");
+    menu.add(about);
+    menu.add(save);
+    menu.add(reload);
+    menu.add(exit);
+    about.addActionListener(event -> {
+      ImageIcon icon = new ImageIcon("data/images/game_engine.png");
+      JLabel title = new JLabel("<html><h2>Adventure Game Engine</h2></html>",
+              SwingConstants.CENTER);
+      JLabel subtitle = new JLabel("<html><div style='text-align:center;'>" +
+              "This game was created by Josh, Ethan, and Steven.<br>" +
+              "You will embark on adventures through our engine where you can move through<br>" +
+              "different rooms, interact with items, solves puzzles, and defeat monsters.<br>" +
+              "Make sure you don't fall asleep and have fun!</div></html>", SwingConstants.CENTER);
+      JLabel imageLabel = new JLabel(icon, SwingConstants.CENTER);
+      title.setAlignmentX(Component.CENTER_ALIGNMENT);
+      subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+      imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      JPanel panel = new JPanel();
+      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+      panel.add(title);
+      panel.add(subtitle);
+      panel.add(Box.createVerticalStrut(10));
+      panel.add(imageLabel);
+      JOptionPane.showMessageDialog(null, panel, "About Game Engine",
+              JOptionPane.PLAIN_MESSAGE);
+    });
+    exit.addActionListener((event) ->
+            System.exit(0));
+    menuBar.add(menu);
+    return menuBar;
   }
 
   @Override
   public void updateImage(String path) {
-    ImageIcon image = new ImageIcon(path);
-    this.view.setIcon(image);
-    this.view.repaint();
-    this.view.revalidate();
+    this.view.setIcon(new ImageIcon(path));
   }
 
   @Override
@@ -233,33 +271,12 @@ public class GameView extends JFrame implements IGameView {
 
   @Override
   public void updateFeedback(String feedback) {
-
-  }
-
-  public JMenuBar buildMenu() {
-    JMenuBar menuBar = new JMenuBar();
-    JMenu menu = new JMenu("File");
-    JMenuItem about = new JMenuItem("About the Engine...");
-    JMenuItem save = new JMenuItem("Save Game");
-    JMenuItem reload = new JMenuItem("Reload Game");
-    JMenuItem exit = new JMenuItem("Exit");
-    menu.add(about);
-    menu.add(save);
-    menu.add(reload);
-    menu.add(exit);
-    about.addActionListener((event) ->
-            JOptionPane
-                    .showMessageDialog(null,
-                            "This is our Adventure Game. It's pretty cool "));
-    exit.addActionListener((event) ->
-            System.exit(0));
-    menuBar.add(menu);
-    return menuBar;
+    this.feedbackField.setText(feedback);
   }
 
   @Override
   public String getAnswer() {
-    return answerField.getText();
+    return answer.getText();
   }
 
   @Override
@@ -292,11 +309,13 @@ public class GameView extends JFrame implements IGameView {
 
   @Override
   public void display() {
+    pack();
+    setLocationRelativeTo(null);
     setVisible(true);
   }
 
   public static void main(String[] args) {
     GameView view = new GameView("Adventure Game");
-    view.setVisible(true);
+    view.display();
   }
 }
