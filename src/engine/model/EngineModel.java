@@ -84,7 +84,7 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String examine(String target) {
-    if (player.getCurrentRoom().getInventory().hasItem(target)) {
+    if (player.getCurrentRoom().getInventory().hasItem(target) || player.hasItem(target)) {
       return Item.fromName(target).getDescription();
     } else if (player.getCurrentRoom().getObstacle() != null
             && player.getCurrentRoom().getObstacle().getName().equalsIgnoreCase(target)) {
