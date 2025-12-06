@@ -27,6 +27,7 @@ public class GameView extends JFrame implements IGameView {
   private JTextArea descriptionText;
   private ImageIcon roomIcon;
   private JTextField answer;
+  private JTextArea feedbackField;
 
   public GameView(String caption) {
     super(caption);
@@ -45,7 +46,7 @@ public class GameView extends JFrame implements IGameView {
     this.view = new JLabel(roomIcon);
     image.add(view, BorderLayout.CENTER);
     image.setBorder(BorderFactory.createTitledBorder("View"));
-    image.setPreferredSize(new Dimension(600, 500));
+    image.setPreferredSize(new Dimension(600, 400));
     leftPanel.add(image, BorderLayout.NORTH);
 
     // Bottom left description panel
@@ -59,6 +60,18 @@ public class GameView extends JFrame implements IGameView {
     scroll.setBorder(BorderFactory.createTitledBorder("Description"));
     description.add(scroll, BorderLayout.CENTER);
     leftPanel.add(description, BorderLayout.CENTER);
+
+    JPanel feedback = new JPanel(new BorderLayout());
+    this.feedbackField = new JTextArea();
+    this.feedbackField.setText("Feedback for using, picking up, dropping, examining, and solving" +
+            "will be displayed here");
+    this.feedbackField.setLineWrap(true);
+    this.feedbackField.setWrapStyleWord(true);
+    JScrollPane feedScroll = new JScrollPane(feedbackField);
+    feedScroll.setBorder(BorderFactory.createTitledBorder("Feedback"));
+    feedback.add(feedScroll, BorderLayout.CENTER);
+    feedback.setPreferredSize(new Dimension(600, 100));
+    leftPanel.add(feedback, BorderLayout.SOUTH);
 
     // Add left to frame
     this.add(leftPanel, BorderLayout.WEST);
@@ -172,6 +185,7 @@ public class GameView extends JFrame implements IGameView {
     // Add both panels to wrapper
     bottomPanel.add(statusPanel);
     bottomPanel.add(answerPanel);
+    bottomPanel.setPreferredSize(new Dimension(600, 100));
 
     // Add wrapper to the RIGHT panel
     rightPanel.add(bottomPanel, BorderLayout.SOUTH);
