@@ -1,7 +1,7 @@
 package engine.view;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.*;
@@ -29,6 +29,7 @@ public class GameView extends JFrame implements IGameView {
   private JTextField answer;
   private JLabel score;
   private JLabel rank;
+  private JTextArea feedbackField;
 
   public GameView(String caption) {
     super(caption);
@@ -47,7 +48,7 @@ public class GameView extends JFrame implements IGameView {
     this.view = new JLabel(roomIcon);
     image.add(view, BorderLayout.CENTER);
     image.setBorder(BorderFactory.createTitledBorder("View"));
-    image.setPreferredSize(new Dimension(600, 500));
+    image.setPreferredSize(new Dimension(600, 400));
     leftPanel.add(image, BorderLayout.NORTH);
 
     // Bottom left description panel
@@ -61,6 +62,18 @@ public class GameView extends JFrame implements IGameView {
     scroll.setBorder(BorderFactory.createTitledBorder("Description"));
     description.add(scroll, BorderLayout.CENTER);
     leftPanel.add(description, BorderLayout.CENTER);
+
+    JPanel feedback = new JPanel(new BorderLayout());
+    this.feedbackField = new JTextArea();
+    this.feedbackField.setText("Feedback for using, picking up, dropping, examining, and solving" +
+            "will be displayed here");
+    this.feedbackField.setLineWrap(true);
+    this.feedbackField.setWrapStyleWord(true);
+    JScrollPane feedScroll = new JScrollPane(feedbackField);
+    feedScroll.setBorder(BorderFactory.createTitledBorder("Feedback"));
+    feedback.add(feedScroll, BorderLayout.CENTER);
+    feedback.setPreferredSize(new Dimension(600, 100));
+    leftPanel.add(feedback, BorderLayout.SOUTH);
 
     // Add left to frame
     this.add(leftPanel, BorderLayout.WEST);
@@ -174,6 +187,7 @@ public class GameView extends JFrame implements IGameView {
     // Add both panels to wrapper
     bottomPanel.add(statusPanel);
     bottomPanel.add(answerPanel);
+    bottomPanel.setPreferredSize(new Dimension(600, 100));
 
     // Add wrapper to the RIGHT panel
     rightPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -217,6 +231,11 @@ public class GameView extends JFrame implements IGameView {
     this.rank.setText(rank);
   }
 
+  @Override
+  public void updateFeedback(String feedback) {
+
+  }
+
   public JMenuBar buildMenu() {
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
@@ -236,6 +255,44 @@ public class GameView extends JFrame implements IGameView {
             System.exit(0));
     menuBar.add(menu);
     return menuBar;
+  }
+
+  @Override
+  public String getAnswer() {
+    return answerField.getText();
+  }
+
+  @Override
+  public String selectedItemPlayer() {
+    if(playerInventoryList.isSelectionEmpty())
+      return "";
+    return playerInventoryList.getSelectedValue().toString();
+  }
+
+  @Override
+  public String selectedItemRoom() {
+    if(roomInventoryList.isSelectionEmpty())
+      return "";
+    return roomInventoryList.getSelectedValue().toString();
+  }
+
+  @Override
+  public void addActionListener(ActionListener listener) {
+    this.btnNorth.addActionListener(listener);
+    this.btnSouth.addActionListener(listener);
+    this.btnEast.addActionListener(listener);
+    this.btnWest.addActionListener(listener);
+    this.btnExamineRoom.addActionListener(listener);
+    this.btnTake.addActionListener(listener);
+    this.btnExaminePlayer.addActionListener(listener);
+    this.btnDrop.addActionListener(listener);
+    this.btnUse.addActionListener(listener);
+    this.btnAnswer.addActionListener(listener);
+  }
+
+  @Override
+  public void display() {
+    setVisible(true);
   }
 
   public static void main(String[] args) {

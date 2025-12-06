@@ -18,4 +18,6 @@ public interface IObstacle {
   String getEffects();
 
   String getDescription();
+
+  String getMessageOnSolve();
 }
