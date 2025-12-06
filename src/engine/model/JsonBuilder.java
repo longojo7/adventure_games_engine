@@ -128,12 +128,16 @@ public class JsonBuilder implements IGameBuilder {
         for (Item item : player.itemsList())
           if (room.getInventory().hasItem(item.getName()))
             room.getInventory().removeItem(item.getName());
-        for (String solvedRoom : playerData.get("solved_rooms").toString().split(", "))
-          if (rooms.get(solvedRoom) == room)
-            room.getObstacle().forceSolve();
+        String solvedRoomsStr = playerData.get("solved_rooms").toString();
+        if (!solvedRoomsStr.isEmpty()) {
+          for (String solvedRoom : solvedRoomsStr.split(", ")) {
+            if (rooms.get(solvedRoom) == room && room.getObstacle() != null) {
+              room.getObstacle().forceSolve();
+            }
+          }
+        }
       }
     }
-
     return new EngineModel(player, rooms);
   }
 
