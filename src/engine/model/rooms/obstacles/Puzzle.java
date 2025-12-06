@@ -80,4 +80,9 @@ public class Puzzle implements IObstacle {
   public String getDescription() {
     return description;
   }
+
+  @Override
+  public String getMessageOnSolve() {
+    return messageOnSolve;
+  }
 }

@@ -106,7 +106,7 @@ public class EngineModel implements IEngineModel {
     if (player.getCurrentRoom().getObstacle() == null
             || !player.getCurrentRoom().getObstacle().attemptSolution(solution)) {return "no use";}
     takeDamage();
-    return "can use";
+    return player.getCurrentRoom().getObstacle().getMessageOnSolve();
   }
 
   @Override
