@@ -12,6 +12,8 @@ public interface IGameView {
   void updateDescription(String description);
   void updateInventory(List<String> playerInventory, List<String> roomInventory);
   void updateHealth(String health);
+  void updateScore(String score);
+  void updateRank(String rank);
 
   void updateFeedback(String feedback);
 
