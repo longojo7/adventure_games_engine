@@ -26,6 +26,7 @@ public class GameView extends JFrame implements IGameView {
   private JLabel playerStatus;
   private JTextArea descriptionText;
   private ImageIcon roomIcon;
+  private JTextField answer;
 
   public GameView(String caption) {
     super(caption);
@@ -133,12 +134,9 @@ public class GameView extends JFrame implements IGameView {
     this.btnExamineRoom.setActionCommand("Examine Room Item");
     this.btnTake = new JButton("Take");
     this.btnTake.setActionCommand("Take Item");
-    this.btnAnswer = new JButton("Answer");
-    this.btnAnswer.setActionCommand("Answer Item");
     JPanel roomButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
     roomButtons.add(btnExamineRoom);
     roomButtons.add(btnTake);
-    roomButtons.add(btnAnswer);
     room.add(roomButtons, BorderLayout.SOUTH);
 
     // add everything to inventory panel
@@ -147,15 +145,36 @@ public class GameView extends JFrame implements IGameView {
     // add inventory panel to the right panel
     rightPanel.add(inventoryPanel, BorderLayout.CENTER);
 
-    // bottom right panel to show health status
+    // bottom right panel to show health status and answer
+    JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
+
+    // left side for status
     JPanel statusPanel = new JPanel(new BorderLayout());
     this.playerStatus = new JLabel("Player is wide awake.");
     statusPanel.add(playerStatus, BorderLayout.CENTER);
     statusPanel.setBorder(BorderFactory.createTitledBorder("Player Status"));
-    statusPanel.setPreferredSize(new Dimension(300, 250));
 
-    // add status panel to the bottom right
-    rightPanel.add(statusPanel, BorderLayout.SOUTH);
+    // right side for input
+    JPanel answerPanel = new JPanel(new BorderLayout());
+
+    // text field for typing puzzle answers
+    this.answer = new JTextField();
+    answerPanel.add(answer, BorderLayout.CENTER);
+
+    // Button beside the text field
+    JPanel answerButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    this.btnAnswer = new JButton("Answer");
+    this.btnAnswer.setActionCommand("Answer Item");
+    answerButtonPanel.add(btnAnswer);
+    answerPanel.add(answerButtonPanel, BorderLayout.SOUTH);
+    answerPanel.setBorder(BorderFactory.createTitledBorder("Enter Answer"));
+
+    // Add both panels to wrapper
+    bottomPanel.add(statusPanel);
+    bottomPanel.add(answerPanel);
+
+    // Add wrapper to the RIGHT panel
+    rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
     // add right panel to frame
     this.add(rightPanel, BorderLayout.EAST);
