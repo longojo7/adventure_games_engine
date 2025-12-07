@@ -21,6 +21,7 @@ public class GraphicsController implements IGameController, ActionListener {
 
   @Override
   public void go() throws IOException {
+    updateView();
     view.display();
   }
 

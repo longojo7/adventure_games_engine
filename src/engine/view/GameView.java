@@ -10,7 +10,6 @@ import javax.swing.*;
 
 import engine.controller.GraphicsController;
 import engine.controller.IGameController;
-import engine.model.EngineModel;
 import engine.model.IEngineModel;
 import engine.model.JsonBuilder;
 
@@ -43,7 +42,7 @@ public class GameView extends JFrame implements IGameView {
     super(caption);
     setSize(1200, 800);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setLayout(new BorderLayout());
+    setLayout(new BorderLayout());
     this.buildView();
     this.setJMenuBar(this.buildMenu());
   }
@@ -97,9 +96,13 @@ public class GameView extends JFrame implements IGameView {
     JPanel directionPanel = new JPanel(new BorderLayout());
     JPanel grid = new JPanel(new GridLayout(3, 3));
     this.btnNorth = new JButton(new ImageIcon("data/images/North.png"));
+    this.btnNorth.setActionCommand("move north");
     this.btnSouth = new JButton(new ImageIcon("data/images/South.png"));
+    this.btnSouth.setActionCommand("move south");
     this.btnEast = new JButton(new ImageIcon("data/images/East.png"));
+    this.btnEast.setActionCommand("move east");
     this.btnWest = new JButton(new ImageIcon("data/images/West.png"));
+    this.btnWest.setActionCommand("move west");
     btnNorth.setBorderPainted(false);
     btnNorth.setContentAreaFilled(false);
     btnSouth.setBorderPainted(false);
@@ -240,10 +243,48 @@ public class GameView extends JFrame implements IGameView {
       JOptionPane.showMessageDialog(null, panel, "About Game Engine",
               JOptionPane.PLAIN_MESSAGE);
     });
-    exit.addActionListener((event) ->
-            System.exit(0));
+    exit.addActionListener((event) -> {
+      // Menu to ask if they want to quit
+      int choice = JOptionPane.showConfirmDialog(null,
+              "Are you sure you want to quit?", "Confirm Exit",
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+      if (choice == JOptionPane.YES_OPTION) {
+        // If they select to quit show quit view
+        ImageIcon endImage = new ImageIcon("data/images/nighty_night.png");
+        JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",
+                SwingConstants.CENTER);
+        JLabel nameStatus = new JLabel("<html><div style='text-align:center;'>" +
+                "The status will go here.<br>" +
+                "The score will go here.<br>" +
+                "The rank will go here.<br>" +
+                "Come back soon!</div></html>", SwingConstants.CENTER);
+        JLabel endImageLabel = new JLabel(endImage, SwingConstants.CENTER);
+        thanks.setAlignmentX(Component.CENTER_ALIGNMENT);
+        nameStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+        endImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(thanks);
+        panel.add(nameStatus);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(endImageLabel);
+        JOptionPane.showMessageDialog(null, panel,
+                "Game Over!", JOptionPane.PLAIN_MESSAGE);
+        System.exit(0);
+      }
+    });
     menuBar.add(menu);
     return menuBar;
+  }
+
+  public String startView() {
+    String playerName = JOptionPane.showInputDialog(null,
+            "Enter a name for your Adventurer:", "Player Name",
+            JOptionPane.QUESTION_MESSAGE);
+    if (playerName == null || playerName.trim().isEmpty()) {
+      System.exit(0);
+    }
+    return playerName;
   }
 
   @Override
@@ -329,8 +370,10 @@ public class GameView extends JFrame implements IGameView {
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
-    IEngineModel model = builder.createModel("");
     IGameView view = new GameView("Adventure Game");
+    String playerName = ((GameView) view).startView();
+    IEngineModel model = builder.createModel(playerName);
+
     IGameController controller = new GraphicsController(model, view);
     controller.go();
   }
