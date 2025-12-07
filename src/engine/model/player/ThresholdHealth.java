@@ -25,7 +25,7 @@ public class ThresholdHealth implements IHealth {
   public void damage(int damage) {
     health -= damage;
 
-    if (damage > health)
+    if (health <= 0)
       sleep();
   }
 

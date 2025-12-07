@@ -103,7 +103,6 @@ public class GameController implements IGameController {
     output.append(model.environmentDescription()).append("\n");
     String monsterAttack = model.monsterAttack();
     if (monsterAttack != null && model.roomObstacleActive()) {
-      model.dealDamage();
       output.append( model.getPlayerName() + " Takes " + model.dealDamage() + " Damage");
       if (model.playerStatus().equals("Asleep")){
         output.append("\nYou have Fallen Asleep. ");

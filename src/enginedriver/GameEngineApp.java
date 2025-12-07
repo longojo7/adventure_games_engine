@@ -103,7 +103,7 @@ public class GameEngineApp {
 //    }
 //
 //    String gameFile = args[0];
-    GameEngineApp app = new GameEngineApp("data/align_quest_game_elements.json", new InputStreamReader(System.in), System.out);
+    GameEngineApp app = new GameEngineApp("data/alignquest.json", new InputStreamReader(System.in), System.out);
 
     try {
       app.start();
