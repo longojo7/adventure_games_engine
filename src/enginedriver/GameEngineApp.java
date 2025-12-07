@@ -1,10 +1,13 @@
 package enginedriver;
 
 import engine.controller.GameController;
+import engine.controller.GraphicsController;
 import engine.controller.IGameController;
 import engine.model.DummyModel;
 import engine.model.IEngineModel;
 import engine.model.JsonBuilder;
+import engine.view.GameView;
+import engine.view.IGameView;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -19,6 +22,7 @@ public class GameEngineApp {
   private final String gameFileName;
   private final Readable source;
   private final Appendable output;
+  private final String mode;
   private IEngineModel model;
   private IGameController controller;
 
@@ -26,14 +30,16 @@ public class GameEngineApp {
    * Constructs a new GameEngineApp.
    * @param gameFileName the name of the game file to load.
    * @param source       the source of user input (e.g., System.in, StringReader, FileReader).
+   * @param mode         the game mode.
    * @param output       the destination for game output (e.g., System.out, StringWriter, FileWriter).
    * @throws IllegalArgumentException if any parameter is null.
    */
-  public GameEngineApp(String gameFileName, Readable source, Appendable output) {
-    if (gameFileName == null || source == null || output == null) {
+  public GameEngineApp(String gameFileName, String mode, Readable source, Appendable output) {
+    if (gameFileName == null || mode == null || source == null || output == null) {
       throw new IllegalArgumentException("All parameters must be non-null");
     }
     this.gameFileName = gameFileName;
+    this.mode= mode;
     this.source = source;
     this.output = output;
   }
@@ -56,9 +62,17 @@ public class GameEngineApp {
       e.printStackTrace();
     }
 
-  
-  
-    controller = new GameController(model, builder, source, output);
+
+
+    // Create the appropriate controller based on the mode
+    if ("-graphics".equals(mode)) {
+      // create a GameView and GraphicsController
+      IGameView view = new GameView("Adventure Game");
+      controller = new GraphicsController(model, view);
+    } else {
+      // create a GameController
+      controller = new GameController(model, builder, source, output);
+    }
 
     controller.go();
   }
@@ -110,8 +124,7 @@ public class GameEngineApp {
           break;
 
         case "-graphics":
-          // Graphics mode: console input and output (graphics implementation TBD)
-          System.err.println("Graphics mode not yet implemented. Running in text mode.");
+         //Graphics mode setup.
           source = new InputStreamReader(System.in);
           output = System.out;
           break;
@@ -159,7 +172,7 @@ public class GameEngineApp {
           return;
       }
 
-      GameEngineApp app = new GameEngineApp(gameFile, source, output);
+      GameEngineApp app = new GameEngineApp(gameFile, mode, source, output);
       app.start();
 
       // Close file output if it was used

@@ -16,7 +16,9 @@ public class TestGameEngineApp {
 
     StringWriter output = new StringWriter();
 
-    GameEngineApp app = new GameEngineApp("test-game.json", input, output);
+    String mode = "null";
+    
+    GameEngineApp app = new GameEngineApp("test-game.json", mode, input, output);
 
     try {
       app.start();
