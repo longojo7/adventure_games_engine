@@ -2,9 +2,17 @@ package engine.view;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
 
 import javax.swing.*;
+
+import engine.controller.GraphicsController;
+import engine.controller.IGameController;
+import engine.model.EngineModel;
+import engine.model.IEngineModel;
+import engine.model.JsonBuilder;
 
 public class GameView extends JFrame implements IGameView {
   private JButton btnNorth;
@@ -314,8 +322,16 @@ public class GameView extends JFrame implements IGameView {
     setVisible(true);
   }
 
-  public static void main(String[] args) {
-    GameView view = new GameView("Adventure Game");
-    view.display();
+  public static void main(String[] args) throws Exception {
+    JsonBuilder builder;
+    try {
+      builder = new JsonBuilder(new FileReader("data/alignquest.json"));
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    IEngineModel model = builder.createModel("");
+    IGameView view = new GameView("Adventure Game");
+    IGameController controller = new GraphicsController(model, view);
+    controller.go();
   }
 }
