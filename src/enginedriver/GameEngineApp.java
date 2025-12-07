@@ -45,8 +45,6 @@ public class GameEngineApp {
    */
   public void start() throws IOException {
     // Initialize the game model.
-    // TODO: Replace DummyModel with actual game loading from gameFileName.
-    // This would involve parsing the JSON file and constructing the proper model.
     model = createModel(gameFileName);
 
     JsonBuilder builder = null;
@@ -67,18 +65,10 @@ public class GameEngineApp {
 
   /**
    * Creates a game model from the specified game file.
-   * Currently uses DummyModel as a placeholder.
-   * TODO: Implement JSON parsing to load actual game data.
    * @param gameFileName the name of the game file to load.
    * @return the initialized game model.
    */
   private IEngineModel createModel(String gameFileName) {
-    // TODO: Implement actual game loading logic
-    // This would involve:
-    // 1. Reading the JSON file from gameFileName.
-    // 2. Parsing the JSON into game objects (rooms, items, puzzles, etc.)
-    // 3. Constructing a proper EngineModel with the loaded data.
-    // For now, we use DummyModel as a placeholder.
     JsonBuilder builder;
 
     try {
@@ -96,17 +86,87 @@ public class GameEngineApp {
    * @param args command line arguments (expects game file name as first argument).
    */
   public static void main(String[] args) {
-//    if (args.length < 1) {
-//      System.err.println("Usage: java enginedriver.GameEngineApp <game-file> \n You are seeing this because you are" +
-//              " trying to run the engine with no data. Parsing must be done so we can hand data to the engine.");
-//      System.exit(1);
-//    }
-//
-//    String gameFile = args[0];
-    GameEngineApp app = new GameEngineApp("data/align_quest_game_elements.json", new InputStreamReader(System.in), System.out);
+    if (args.length < 2) {
+      System.err.println("Usage:");
+      System.err.println("  java -jar game_engine <filename> -text");
+      System.err.println("  java -jar game_engine <filename> -graphics");
+      System.err.println("  java -jar game_engine <filename> -batch <source>");
+      System.err.println("  java -jar game_engine <filename> -batch <source> <target>");
+      System.exit(1);
+    }
+
+    String gameFile = args[0];
+    String mode = args[1];
+
+    Readable source;
+    Appendable output;
 
     try {
+      switch (mode) {
+        case "-text":
+          // Text mode: console input and output
+          source = new InputStreamReader(System.in);
+          output = System.out;
+          break;
+
+        case "-graphics":
+          // Graphics mode: console input and output (graphics implementation TBD)
+          System.err.println("Graphics mode not yet implemented. Running in text mode.");
+          source = new InputStreamReader(System.in);
+          output = System.out;
+          break;
+
+        case "-batch":
+          if (args.length < 3) {
+            System.err.println("Error: -batch mode requires a source file");
+            System.err.println("Usage: java -jar game_engine <filename> -batch <source> [<target>]");
+            System.exit(1);
+            return;
+          }
+
+          String sourceFile = args[2];
+
+          // Batch mode with file input
+          try {
+            source = new FileReader(sourceFile);
+          } catch (FileNotFoundException e) {
+            System.err.println("Error: Source file not found: " + sourceFile);
+            System.exit(1);
+            return;
+          }
+
+          // Check if target file is specified
+          if (args.length >= 4) {
+            // Batch mode with file input and file output
+            String targetFile = args[3];
+            try {
+              output = new java.io.FileWriter(targetFile);
+            } catch (IOException e) {
+              System.err.println("Error: Cannot create target file: " + targetFile);
+              System.exit(1);
+              return;
+            }
+          } else {
+            // Batch mode with file input and console output
+            output = System.out;
+          }
+          break;
+
+        default:
+          System.err.println("Error: Unknown mode: " + mode);
+          System.err.println("Valid modes are: -text, -graphics, -batch");
+          System.exit(1);
+          return;
+      }
+
+      GameEngineApp app = new GameEngineApp(gameFile, source, output);
       app.start();
+
+      // Close file output if it was used
+      if (output instanceof java.io.FileWriter) {
+        ((java.io.FileWriter) output).close();
+      }
+
     } catch (IOException e) {
       System.err.println("Error running game: " + e.getMessage());
       e.printStackTrace();
