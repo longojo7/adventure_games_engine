@@ -71,7 +71,7 @@ public class GameView extends JFrame implements IGameView {
     JPanel description = new JPanel(new BorderLayout());
     this.descriptionText = new JTextArea();
     descriptionText.setText("This is a very very very very very very long test string to check " +
-            "wrapping. If the wrapping doesn't work Prof K is going to be really pissed off");
+            "wrapping. If the wrapping doesn't work Prof K is going to be really unhappy");
     this.descriptionText.setLineWrap(true);
     this.descriptionText.setWrapStyleWord(true);
     JScrollPane scroll = new JScrollPane(descriptionText);
@@ -392,7 +392,7 @@ public class GameView extends JFrame implements IGameView {
     String playerName = ((GameView) view).startView();
     IEngineModel model = builder.createModel(playerName);
 
-    IGameController controller = new GraphicsController(model, view);
+    IGameController controller = new GraphicsController(model, view, builder);
     controller.go();
   }
 }

@@ -68,7 +68,7 @@ public class GameEngineApp {
     if ("-graphics".equals(mode)) {
       // create a GameView and GraphicsController
       IGameView view = new GameView("Adventure Game");
-      controller = new GraphicsController(model, view);
+      controller = new GraphicsController(model, view, builder);
     } else {
       // create a GameController
       controller = new GameController(model, builder, source, output);
