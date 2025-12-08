@@ -255,15 +255,20 @@ public class GameView extends JFrame implements IGameView {
       JOptionPane.showMessageDialog(null, panel, "About Game Engine",
               JOptionPane.PLAIN_MESSAGE);
     });
-    save.addActionListener(event -> {JOptionPane.showMessageDialog(null,
-            "Game saved successfully!","Save Game", JOptionPane.INFORMATION_MESSAGE);
-    });
-    reload.addActionListener(event -> {
-      JOptionPane.showMessageDialog(null, "Game reloaded successfully!",
-              "Reload Game", JOptionPane.INFORMATION_MESSAGE);
-    });
     menuBar.add(menu);
     return menuBar;
+  }
+
+  @Override
+  public void showSaveView() {
+    JOptionPane.showMessageDialog(null, "Game saved successfully!",
+            "Save Game", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
+  public void showReloadView() {
+    JOptionPane.showMessageDialog(null, "Game reloaded successfully!",
+            "Reload Game", JOptionPane.INFORMATION_MESSAGE);
   }
 
   @Override
@@ -325,16 +330,6 @@ public class GameView extends JFrame implements IGameView {
   @Override
   public void updateHealth(String health) {
     this.playerStatus.setText(health);
-  }
-
-  @Override
-  public void updateScore(String score) {
-    this.score.setText(score);
-  }
-
-  @Override
-  public void updateRank(String rank) {
-    this.rank.setText(rank);
   }
 
   @Override

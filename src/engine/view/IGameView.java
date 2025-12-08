@@ -8,7 +8,23 @@ import java.util.List;
  */
 public interface IGameView {
 
+
+  /**
+   * Displays a dialog to prompt the user to enter their adventurer's name.
+   * @return the player name entered by the user
+   */
   String startView();
+
+  /**
+   * Displays a confirmation dialog indicating the game has been saved successfully.
+   */
+  void showSaveView();
+
+  /**
+   * Displays a confirmation dialog indicating the game has been reloaded successfully.
+   */
+  void showReloadView();
+
   void gameOver(String status, String score, String rank);
 
   /**
@@ -35,18 +51,6 @@ public interface IGameView {
    * @param health the health value to display
    */
   void updateHealth(String health);
-
-  /**
-   * Updates the player's score display.
-   * @param score the score value to display
-   */
-  void updateScore(String score);
-
-  /**
-   * Updates the player's rank display.
-   * @param rank the rank to display
-   */
-  void updateRank(String rank);
 
   /**
    * Replaces the feedback text.
