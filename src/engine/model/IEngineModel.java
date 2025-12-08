@@ -138,6 +138,8 @@ public interface IEngineModel {
    */
   String environmentDescription();
 
+  String getImage();
+
   /**
    * Gets the monster's attack message.
    *

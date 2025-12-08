@@ -51,7 +51,7 @@ public class GraphicsController implements IGameController, ActionListener {
    * Updates all view components with current game state.
    */
   private void updateView() {
-    view.updateImage("");
+    view.updateImage(model.getImage());
 
     // add exit info
     StringBuilder description = new StringBuilder(model.environmentDescription());
@@ -148,7 +148,7 @@ public class GraphicsController implements IGameController, ActionListener {
     String message = model.useItem(view.selectedItemPlayer());
     view.updateFeedback(
             "no use".equals(message) ?
-                    "Cannot use this item." + damageString():
+                    "Cannot use this item." + damageString() :
                     message);
     updateView();
   }

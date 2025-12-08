@@ -26,6 +26,8 @@ public interface IRoom {
    */
   String getDescription();
 
+  String getImagePath();
+
   /**
    * Gets the connection in the specified direction.
    *

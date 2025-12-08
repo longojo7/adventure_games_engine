@@ -57,7 +57,7 @@ public class TestInfiniteInventory {
     List<Item> list = new ArrayList<>(List.of(td));
     IInventory inv = new InfiniteInventory(list);
     assertEquals(1, inv.getItems().size());
-    assertEquals(td, inv.getItems().getFirst());
+    assertEquals(td, inv.getItems().get(0));
   }
 
   /**
