@@ -42,7 +42,7 @@ public class GameView extends JFrame implements IGameView {
     super(caption);
     setSize(1200, 800);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLayout(new BorderLayout());
+    setLayout(new GridLayout(1, 2));
     this.buildView();
     this.setJMenuBar(this.buildMenu());
   }
@@ -50,7 +50,6 @@ public class GameView extends JFrame implements IGameView {
   private void buildView() {
     // LEFT PANEL
     JPanel leftPanel = new JPanel(new BorderLayout());
-    leftPanel.setPreferredSize(new Dimension(600, getHeight()));
 
     // Top left image panel
     JPanel image = new JPanel(new BorderLayout());
@@ -86,11 +85,10 @@ public class GameView extends JFrame implements IGameView {
     leftPanel.add(feedback, BorderLayout.SOUTH);
 
     // Add left to frame
-    this.add(leftPanel, BorderLayout.WEST);
+    this.add(leftPanel);
 
     // RIGHT PANEL
     JPanel rightPanel = new JPanel(new BorderLayout());
-    rightPanel.setPreferredSize(new Dimension(600, getHeight()));
 
     // Top right direction panel
     JPanel directionPanel = new JPanel(new BorderLayout());
@@ -207,7 +205,7 @@ public class GameView extends JFrame implements IGameView {
     rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
     // add right panel to frame
-    this.add(rightPanel, BorderLayout.EAST);
+    this.add(rightPanel);
   }
 
   public JMenuBar buildMenu() {

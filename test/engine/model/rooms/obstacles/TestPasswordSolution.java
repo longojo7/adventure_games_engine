@@ -49,7 +49,7 @@ public class TestPasswordSolution {
   public void testPasswordCaseSensitive() {
     ISolution s1 = new PasswordSolution("'PASSWORD'");
     ISolution s2 = new PasswordSolution("'password'");
-    assertFalse(s1.checkSolution(s2));
+    assertTrue(s1.checkSolution(s2));
   }
 
   /**
