@@ -1,0 +1,111 @@
+package engine.model.rooms.obstacles;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import engine.model.events.EventHandler;
+import engine.model.events.GameEvent;
+
+/**
+ * Puzzle obstacle that requires a solution to solve.
+ */
+public class Puzzle implements IObstacle {
+  private final String name;
+  private final ISolution correctSolution;
+  private final List<EventHandler> eventHandlers;
+  private final String effect;
+  private final String description;
+  private final String messageOnSolve;
+  private final int value;
+  private boolean isSolved;
+  private String imagePath;
+
+  /**
+   * Constructs a puzzle obstacle.
+   *
+   * @param name the puzzle name
+   * @param correctSolution the correct solution
+   * @param effect the effects description
+   * @param description the puzzle description
+   * @param value the point value for solving
+   * @param messageOnSolve the message displayed when solved
+   * @param isSolved whether the puzzle is already solved
+   * @param imagePath path to the puzzle's image
+   */
+  public Puzzle(
+          String name,
+          ISolution correctSolution,
+          String effect,
+          String description,
+          int value,
+          String messageOnSolve,
+          boolean isSolved,
+          String imagePath
+  ) {
+    this.name = name;
+    this.correctSolution = correctSolution;
+    this.effect = effect;
+    this.description = description;
+    this.value = value;
+    this.isSolved = isSolved;
+    this.messageOnSolve = messageOnSolve;
+    this.imagePath = imagePath.endsWith("png") ? imagePath : "data/images/generic_puzzle.png";
+
+    eventHandlers = new ArrayList<>();
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public boolean isActive() {
+    return !isSolved;
+  }
+
+  @Override
+  public boolean attemptSolution(ISolution solution) {
+    if (!correctSolution.checkSolution(solution))
+      return false;
+    forceSolve();
+    return true;
+  }
+
+  @Override
+  public void forceSolve() {
+    isSolved = true;
+    for (EventHandler eventHandler : eventHandlers)
+      eventHandler.onEvent(new GameEvent(messageOnSolve));
+  }
+
+  @Override
+  public void addEventHandler(EventHandler eventHandler) {
+    eventHandlers.add(eventHandler);
+  }
+
+  @Override
+  public int getValue() {
+    return value;
+  }
+
+  @Override
+  public String getEffects() {
+    return effect;
+  }
+
+  @Override
+  public String getDescription() {
+    return description;
+  }
+
+  @Override
+  public String getMessageOnSolve() {
+    return messageOnSolve;
+  }
+
+  @Override
+  public String getImagePath() {
+    return imagePath;
+  }
+}
