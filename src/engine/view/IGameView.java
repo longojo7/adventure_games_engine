@@ -9,6 +9,7 @@ import java.util.List;
 public interface IGameView {
 
   String startView();
+  void gameOver(String status, String score, String rank);
 
   /**
    * Updates the displayed image.

@@ -41,6 +41,10 @@ public class GameView extends JFrame implements IGameView {
   private JLabel rank;
   private JTextArea feedbackField;
 
+  JMenuItem exit;
+  JMenuItem save;
+  JMenuItem reload;
+
   /**
    * Constructor for a new game view with the specified window caption.
    * @param caption title for window
@@ -223,9 +227,12 @@ public class GameView extends JFrame implements IGameView {
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
     JMenuItem about = new JMenuItem("About the Engine...");
-    JMenuItem save = new JMenuItem("Save Game");
-    JMenuItem reload = new JMenuItem("Reload Game");
-    JMenuItem exit = new JMenuItem("Exit");
+    save = new JMenuItem("Save Game");
+    save.setActionCommand("Save");
+    reload = new JMenuItem("Reload Game");
+    reload.setActionCommand("Reload");
+    exit = new JMenuItem("Exit");
+    exit.setActionCommand("Exit");
     menu.add(about);
     menu.add(save);
     menu.add(reload);
@@ -252,38 +259,33 @@ public class GameView extends JFrame implements IGameView {
       JOptionPane.showMessageDialog(null, panel, "About Game Engine",
               JOptionPane.PLAIN_MESSAGE);
     });
-    exit.addActionListener((event) -> {
-      // Menu to ask if they want to quit
-      int choice = JOptionPane.showConfirmDialog(null,
-              "Are you sure you want to quit?", "Confirm Exit",
-              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-      if (choice == JOptionPane.YES_OPTION) {
-        // If they select to quit show quit view
-        ImageIcon endImage = new ImageIcon("data/images/nighty_night.png");
-        JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",
-                SwingConstants.CENTER);
-        JLabel nameStatus = new JLabel("<html><div style='text-align:center;'>" +
-                "The status will go here.<br>" +
-                "The score will go here.<br>" +
-                "The rank will go here.<br>" +
-                "Come back soon!</div></html>", SwingConstants.CENTER);
-        JLabel endImageLabel = new JLabel(endImage, SwingConstants.CENTER);
-        thanks.setAlignmentX(Component.CENTER_ALIGNMENT);
-        nameStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
-        endImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(thanks);
-        panel.add(nameStatus);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(endImageLabel);
-        JOptionPane.showMessageDialog(null, panel,
-                "Game Over!", JOptionPane.PLAIN_MESSAGE);
-        System.exit(0);
-      }
-    });
     menuBar.add(menu);
     return menuBar;
+  }
+
+  @Override
+  public void gameOver(String status, String score, String rank) {
+    ImageIcon endImage = new ImageIcon("data/images/nighty_night.png");
+    JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",
+            SwingConstants.CENTER);
+    JLabel nameStatus = new JLabel("<html><div style='text-align:center;'>" +
+            "Status: " + status + "<br>" +
+            "Score: " + score + "<br>" +
+            "Rank: " + rank + "<br>" +
+            "Come back soon!</div></html>", SwingConstants.CENTER);
+    JLabel endImageLabel = new JLabel(endImage, SwingConstants.CENTER);
+    thanks.setAlignmentX(Component.CENTER_ALIGNMENT);
+    nameStatus.setAlignmentX(Component.CENTER_ALIGNMENT);
+    endImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.add(thanks);
+    panel.add(nameStatus);
+    panel.add(Box.createVerticalStrut(10));
+    panel.add(endImageLabel);
+    JOptionPane.showMessageDialog(null, panel,
+            "Game Over!", JOptionPane.PLAIN_MESSAGE);
+    System.exit(0);
   }
 
   /**
@@ -373,6 +375,9 @@ public class GameView extends JFrame implements IGameView {
     this.btnDrop.addActionListener(listener);
     this.btnUse.addActionListener(listener);
     this.btnAnswer.addActionListener(listener);
+    this.exit.addActionListener(listener);
+    this.save.addActionListener(listener);
+    this.reload.addActionListener(listener);
   }
 
   @Override
