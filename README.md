@@ -1,5 +1,11 @@
 # Adventure Game Engine (Model, Controller, and Parser)
 
+For this stage of the project, we moved beyond the text-only interface from homework 8 and added a full graphical user interface. To support this cleanly, we introduced two big pieces: a dedicated view layer and a graphics-based controller.
+
+We started by defining IGameView, an interface that lists everything the controller might need the view to do which might be showing the current room image, update descriptions, refresh inventories, display the player’s status, and collect button-based input from the player. Our concrete GameView class then implements this interface using Swing. It lays out the screen into clear sections: the room image and description on the left, and on the right the navigation arrows, inventory displays with item actions, feedback messages, and the player’s health. The view doesn’t make decisions about gameplay; it just presents information and forwards user interactions through listeners.
+
+To connect the UI to the model, we created a new GraphicsController. Unlike the text controller, which waited for typed commands, this controller listens for button presses and sends the appropriate requests to the engine model. After each action, it tells the view exactly what to update such as the image, description, inventories, so the screen always reflects the current game state. It also manages puzzle answers, game start-up, and ending screens. For saving the game If you change the player name you start using a new save file.
+
 At this level of the project, we expanded our engine from HW7 by introducing a full JSON-based game loader, a centralized item factory, an event system, and a more interactive
 controller. The JSON parser now reads structured game data. It uses the IGameBuilder to construct rooms, obstacles, items, inventories, health objects, and connections, filling in
 defaults when game files omit certain pieces. All items loaded from JSON are now built and stored in a dedicated ItemFactory, which keeps a consistent mapping from IDs to Items and
