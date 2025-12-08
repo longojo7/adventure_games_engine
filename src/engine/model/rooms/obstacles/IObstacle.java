@@ -86,4 +86,6 @@ public interface IObstacle {
   default String getAttack() {
     return null;
   }
+
+  String getImagePath();
 }

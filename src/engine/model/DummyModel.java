@@ -155,6 +155,11 @@ public class DummyModel implements IEngineModel {
   }
 
   @Override
+  public String getImage() {
+    return "";
+  }
+
+  @Override
   public String monsterAttack() {
     return "The monster attacks you nonviolently. You take 5 damage.";
   }

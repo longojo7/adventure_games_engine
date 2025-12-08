@@ -27,7 +27,7 @@ public class TestMonster {
     ISolution solution = new ItemSolution(items);
     Monster ghost = new Monster("GHOST", solution, "Haunts you",
             "A spooky cloud passes you?", 5, "Spooky attack",
-            200, "Ghost is gone!", false);
+            200, "Ghost is gone!", false, "");
     assertEquals(5, ghost.getDamage());
     assertEquals("Spooky attack", ghost.getAttack());
   }
@@ -43,7 +43,7 @@ public class TestMonster {
     ISolution solution = new ItemSolution(items);
     Monster ghost = new Monster("GHOST", solution, "Haunts you",
             "A spooky cloud passes you?", 5, "Spooky attack",
-            200, "Ghost is gone!", false);
+            200, "Ghost is gone!", false, "");
     // Make sure the monster is active first
     assertTrue(ghost.isActive());
     assertTrue(ghost.attemptSolution(solution));

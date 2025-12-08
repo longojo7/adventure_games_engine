@@ -21,8 +21,10 @@ public class Monster extends Puzzle {
    * @param isSolved whether the monster is already defeated
    */
   public Monster(String name, ISolution correctSolution, String effect, String description,
-                 int damage, String attack, int value, String messageOnSolve, boolean isSolved) {
-    super(name, correctSolution, effect, description, value, messageOnSolve, isSolved);
+                 int damage, String attack, int value,
+                 String messageOnSolve, boolean isSolved, String imagePath) {
+    super(name, correctSolution, effect, description, value, messageOnSolve, isSolved,
+            imagePath.endsWith("png") ? imagePath : "data/images/generic_monster.png");
     this.damage = damage;
     this.attack = attack;
   }

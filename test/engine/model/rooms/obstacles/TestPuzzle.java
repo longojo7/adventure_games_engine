@@ -21,7 +21,7 @@ public class TestPuzzle {
     solution = new PasswordSolution("'Base Case'");
     puzzle = new Puzzle("RECURSION-PUZZLE", solution,
             "Recursive Madness has you stuck", "Solve the infinite loop!",
-            700, "You Solved Recursion!", false);
+            700, "You Solved Recursion!", false, "");
   }
 
   /**

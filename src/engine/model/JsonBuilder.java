@@ -4,7 +4,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -249,7 +248,8 @@ public class JsonBuilder implements IGameBuilder {
             connections,
             fixtures,
             obstacle,
-            inventory
+            inventory,
+            "data/images/" + jsonRoom.get("picture")
     );
   }
 
@@ -308,7 +308,8 @@ public class JsonBuilder implements IGameBuilder {
             jsonPuzzle.get("description").toString(),
             Integer.parseInt(jsonPuzzle.get("value").toString()),
             messageOnSolve,
-            !Boolean.parseBoolean(jsonPuzzle.get("active").toString())
+            !Boolean.parseBoolean(jsonPuzzle.get("active").toString()),
+            "data/images/" + jsonPuzzle.get("picture")
     );
   }
 
@@ -351,7 +352,8 @@ public class JsonBuilder implements IGameBuilder {
             jsonMonster.get("attack").toString(),
             Integer.parseInt(jsonMonster.get("value").toString()),
             messageOnSolve,
-            !Boolean.parseBoolean(jsonMonster.get("active").toString())
+            !Boolean.parseBoolean(jsonMonster.get("active").toString()),
+            "data/images/" + jsonMonster.get("picture")
     );
   }
 

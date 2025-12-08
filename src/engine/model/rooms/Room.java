@@ -5,11 +5,7 @@ import java.util.Map;
 
 import engine.Direction;
 import engine.model.items.IInventory;
-import engine.model.items.InfiniteInventory;
-import engine.model.items.Item;
 import engine.model.rooms.obstacles.IObstacle;
-import engine.model.rooms.obstacles.Monster;
-import engine.model.rooms.obstacles.Puzzle;
 
 /**
  * Represents a room in the game world.
@@ -21,29 +17,33 @@ public class Room implements IRoom {
   private final List<Fixture> fixtures;
   private final IObstacle obstacle;
   private final IInventory inventory;
+  private final String imagePath;
 
   /**
    * Constructs a room with all properties.
    *
-   * @param name the room name
+   * @param name        the room name
    * @param description the room description
    * @param connections map of directions to connections
-   * @param fixtures list of fixtures in the room
-   * @param obstacle the obstacle in the room, or null
-   * @param inventory the room's inventory
+   * @param fixtures    list of fixtures in the room
+   * @param obstacle    the obstacle in the room, or null
+   * @param inventory   the room's inventory
+   * @param imagePath   path to the room's image
    */
   public Room(String name,
               String description,
               Map<Direction, Connection> connections,
               List<Fixture> fixtures,
               IObstacle obstacle,
-              IInventory inventory) {
+              IInventory inventory,
+              String imagePath) {
     this.name = name;
     this.description = description;
     this.connections = connections;
     this.fixtures = fixtures;
     this.obstacle = obstacle;
     this.inventory = inventory;
+    this.imagePath = imagePath.endsWith("png") ? imagePath : "data/images/generic_location.png";
   }
 
   @Override
@@ -55,8 +55,14 @@ public class Room implements IRoom {
   public String getDescription() {
     if (obstacle != null && obstacle.isActive())
       return obstacle.getEffects();
-    else
-      return description;
+    return description;
+  }
+
+  @Override
+  public String getImagePath() {
+    if (obstacle != null && obstacle.isActive())
+      return obstacle.getImagePath();
+    return imagePath;
   }
 
   @Override

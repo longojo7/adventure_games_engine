@@ -26,7 +26,7 @@ public class TestConnection {
   @BeforeEach
   public void setup() {
     r1 = new Room("Hallway", "Hallway after entrance",
-            Map.of(), List.of(), null, new InfiniteInventory());
+            Map.of(), List.of(), null, new InfiniteInventory(), "");
     northConn = new Connection(false, r1);
   }
 

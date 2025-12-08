@@ -18,6 +18,7 @@ public class Puzzle implements IObstacle {
   private final String messageOnSolve;
   private final int value;
   private boolean isSolved;
+  private String imagePath;
 
   /**
    * Constructs a puzzle obstacle.
@@ -29,6 +30,7 @@ public class Puzzle implements IObstacle {
    * @param value the point value for solving
    * @param messageOnSolve the message displayed when solved
    * @param isSolved whether the puzzle is already solved
+   * @param imagePath path to the puzzle's image
    */
   public Puzzle(
           String name,
@@ -37,7 +39,8 @@ public class Puzzle implements IObstacle {
           String description,
           int value,
           String messageOnSolve,
-          boolean isSolved
+          boolean isSolved,
+          String imagePath
   ) {
     this.name = name;
     this.correctSolution = correctSolution;
@@ -46,6 +49,7 @@ public class Puzzle implements IObstacle {
     this.value = value;
     this.isSolved = isSolved;
     this.messageOnSolve = messageOnSolve;
+    this.imagePath = imagePath.endsWith("png") ? imagePath : "data/images/generic_puzzle.png";
 
     eventHandlers = new ArrayList<>();
   }
@@ -98,5 +102,10 @@ public class Puzzle implements IObstacle {
   @Override
   public String getMessageOnSolve() {
     return messageOnSolve;
+  }
+
+  @Override
+  public String getImagePath() {
+    return imagePath;
   }
 }

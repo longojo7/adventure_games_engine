@@ -43,7 +43,7 @@ public class TestRoom {
    */
   @Test
   public void testGetName() {
-    IRoom r = new Room(name, description, connections, fixtures, null, inventory);
+    IRoom r = new Room(name, description, connections, fixtures, null, inventory, "");
     assertEquals("Entrance", r.getName());
   }
 
@@ -52,7 +52,7 @@ public class TestRoom {
    */
   @Test
   public void testGetDescriptionNoObstacle() {
-    IRoom r = new Room(name, description, connections, fixtures, null, inventory);
+    IRoom r = new Room(name, description, connections, fixtures, null, inventory, "");
     assertEquals("Your standing in the entrance. There is a hallway north",
             r.getDescription());
   }
@@ -64,8 +64,8 @@ public class TestRoom {
   public void testGetDescriptionNotSolved() {
     IObstacle puzzle = new Puzzle("password", new PasswordSolution("abc"),
             "Blocked by password!", "Computer with password.",
-            10, "Solved", false);
-    Room r = new Room(name, description, connections, fixtures, puzzle, inventory);
+            10, "Solved", false, "");
+    Room r = new Room(name, description, connections, fixtures, puzzle, inventory, "");
     assertEquals("Blocked by password!", r.getDescription());
   }
 
@@ -76,8 +76,8 @@ public class TestRoom {
   public void testGetDescriptionSolved() {
     IObstacle puzzle = new Puzzle("password", new PasswordSolution("abc"),
             "Blocked by password!", "Computer with password.",
-            10, "Solved", true);
-    IRoom r = new Room(name, description, connections, fixtures, puzzle, inventory);
+            10, "Solved", true, "");
+    IRoom r = new Room(name, description, connections, fixtures, puzzle, inventory, "");
     assertEquals(description, r.getDescription());
   }
 
@@ -87,10 +87,10 @@ public class TestRoom {
   @Test
   public void testGetConnection() {
     IRoom r2 = new Room("Hallway", "Hallway after entrance",
-            Map.of(), List.of(), null, new InfiniteInventory());
+            Map.of(), List.of(), null, new InfiniteInventory(), "");
     Connection northConn = new Connection(true, r2);
     connections = Map.of(Direction.North, northConn);
-    IRoom r = new Room(name, description, connections, fixtures, null, inventory);
+    IRoom r = new Room(name, description, connections, fixtures, null, inventory, "");
     assertEquals(northConn, r.getConnection(Direction.North));
     assertNull(r.getConnection(Direction.South));
   }
@@ -103,10 +103,10 @@ public class TestRoom {
     Fixture f1 = new Fixture("Dresser", "A brown dresser.");
     Fixture f2 = new Fixture("Chair", "A heavy metal chair.");
     fixtures = List.of(f1, f2);
-    IRoom r = new Room(name, description, connections, fixtures, null, inventory);
+    IRoom r = new Room(name, description, connections, fixtures, null, inventory, "");
     List<Fixture> returned = r.getFixtures();
     assertEquals(2, returned.size());
-    assertEquals(f1, returned.getFirst());
+    assertEquals(f1, returned.get(0));
     assertThrows(UnsupportedOperationException.class, () -> returned.add(f1));
   }
 
@@ -117,8 +117,8 @@ public class TestRoom {
   public void testGetObstacle() {
     IObstacle obstacle = new Puzzle("password", new PasswordSolution("abc"),
             "Blocked by password!", "Computer with password.",
-            10, "Solved", false);
-    Room r = new Room(name, description, connections, fixtures, obstacle, inventory);
+            10, "Solved", false, "");
+    Room r = new Room(name, description, connections, fixtures, obstacle, inventory, "");
     assertEquals(obstacle, r.getObstacle());
   }
 
@@ -127,7 +127,7 @@ public class TestRoom {
    */
   @Test
   public void testGetInventory() {
-    Room r = new Room(name, description, connections, fixtures, null, inventory);
+    Room r = new Room(name, description, connections, fixtures, null, inventory, "");
     assertEquals(inventory, r.getInventory());
 
     // test adding an item now

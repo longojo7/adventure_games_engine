@@ -157,6 +157,11 @@ public class EngineModel implements IEngineModel {
   }
 
   @Override
+  public String getImage() {
+    return player.getCurrentRoom().getImagePath();
+  }
+
+  @Override
   public String monsterAttack() {
     if (player.getCurrentRoom().getObstacle() == null)
       return null;

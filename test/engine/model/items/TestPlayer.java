@@ -48,11 +48,11 @@ public class TestPlayer {
     key = new Item("KEY", 10, 1, "A small key",
             1, 1);
     r1 = new Room("Entrance", "Your standing in the entrance",
-            Map.of(), List.of(), null, new InfiniteInventory());
+            Map.of(), List.of(), null, new InfiniteInventory(), "");
     r2 = new Room("Hallway", "Your standing in the hallway",
-            Map.of(), List.of(), null, new InfiniteInventory());
+            Map.of(), List.of(), null, new InfiniteInventory(), "");
     r3 = new Room("Office", "You are in the office",
-            Map.of(), List.of(), null, new InfiniteInventory());
+            Map.of(), List.of(), null, new InfiniteInventory(), "");
 
     // create a connection A to B (open)
     Connection c1 = new Connection(true, r2);
@@ -63,7 +63,7 @@ public class TestPlayer {
     // Wire them into r1 connection map
     r1 = new Room("Entrance", "Your standing in the entrance",
             Map.of(Direction.North, c1, Direction.South, c2),
-            List.of(), null, new InfiniteInventory());
+            List.of(), null, new InfiniteInventory(), "");
     player = new Player("Player1", health, inv, r1);
 
     // Seed ItemFactory (had to look this up because I had no idea how to test)
@@ -283,6 +283,6 @@ public class TestPlayer {
     player.pickupItem("key");
     List<Item> items = player.itemsList();
     assertEquals(1, items.size());
-    assertEquals("KEY", items.getFirst().getName());
+    assertEquals("KEY", items.get(0).getName());
   }
 }
