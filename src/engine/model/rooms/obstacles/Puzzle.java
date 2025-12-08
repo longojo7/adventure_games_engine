@@ -6,6 +6,9 @@ import java.util.List;
 import engine.model.events.EventHandler;
 import engine.model.events.GameEvent;
 
+/**
+ * Puzzle obstacle that requires a solution to solve.
+ */
 public class Puzzle implements IObstacle {
   private final String name;
   private final ISolution correctSolution;
@@ -16,6 +19,17 @@ public class Puzzle implements IObstacle {
   private final int value;
   private boolean isSolved;
 
+  /**
+   * Constructs a puzzle obstacle.
+   *
+   * @param name the puzzle name
+   * @param correctSolution the correct solution
+   * @param effect the effects description
+   * @param description the puzzle description
+   * @param value the point value for solving
+   * @param messageOnSolve the message displayed when solved
+   * @param isSolved whether the puzzle is already solved
+   */
   public Puzzle(
           String name,
           ISolution correctSolution,

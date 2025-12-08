@@ -7,12 +7,22 @@ import java.util.Map;
 import engine.model.events.EventHandler;
 import engine.model.events.GameEvent;
 
+/**
+ * Health system with threshold-based status descriptions.
+ */
 public class ThresholdHealth implements IHealth {
   private int health;
   private final int maxHealth;
   private final Map<Integer, String> thresholds;
   private List<EventHandler> eventHandlers;
 
+  /**
+   * Constructs a threshold health system.
+   *
+   * @param health the initial health
+   * @param maxHealth the maximum health
+   * @param thresholds map of health thresholds to status descriptions
+   */
   public ThresholdHealth(int health, int maxHealth, Map<Integer, String> thresholds) {
     this.health = health;
     this.maxHealth = maxHealth;

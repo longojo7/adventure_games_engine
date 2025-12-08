@@ -3,15 +3,24 @@ package engine.model.items;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Inventory with unlimited capacity.
+ */
 public class InfiniteInventory implements IInventory {
   private final List<Item> items;
 
+  /**
+   * Constructs an infinite inventory with initial items.
+   *
+   * @param items the initial list of items
+   */
   public InfiniteInventory(List<Item> items) {
-    // this was changed from this.items = List.copyOf(items);
-    // since copyOf is an immutable list so takeFrom wouldn't remove!
     this.items = new ArrayList<>(items);
   }
 
+  /**
+   * Constructs an empty infinite inventory.
+   */
   public InfiniteInventory() {
     this.items = new ArrayList<>();
   }

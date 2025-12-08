@@ -4,9 +4,17 @@ import java.util.List;
 
 import engine.model.items.Item;
 
+/**
+ * Solution that requires specific items.
+ */
 public class ItemSolution implements ISolution {
   private final List<Item> items;
 
+  /**
+   * Constructs an item solution with required items.
+   *
+   * @param items the list of required items
+   */
   public ItemSolution(List<Item> items) {
     this.items = items;
   }

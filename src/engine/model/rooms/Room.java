@@ -11,6 +11,9 @@ import engine.model.rooms.obstacles.IObstacle;
 import engine.model.rooms.obstacles.Monster;
 import engine.model.rooms.obstacles.Puzzle;
 
+/**
+ * Represents a room in the game world.
+ */
 public class Room implements IRoom {
   private final String name;
   private final String description;
@@ -19,6 +22,16 @@ public class Room implements IRoom {
   private final IObstacle obstacle;
   private final IInventory inventory;
 
+  /**
+   * Constructs a room with all properties.
+   *
+   * @param name the room name
+   * @param description the room description
+   * @param connections map of directions to connections
+   * @param fixtures list of fixtures in the room
+   * @param obstacle the obstacle in the room, or null
+   * @param inventory the room's inventory
+   */
   public Room(String name,
               String description,
               Map<Direction, Connection> connections,

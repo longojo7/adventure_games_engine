@@ -13,6 +13,9 @@ import engine.controller.IGameController;
 import engine.model.IEngineModel;
 import engine.model.JsonBuilder;
 
+/**
+ * Graphical user interface for the adventure game using Swing components.
+ */
 public class GameView extends JFrame implements IGameView {
   private JButton btnNorth;
   private JButton btnSouth;
@@ -38,6 +41,10 @@ public class GameView extends JFrame implements IGameView {
   private JLabel rank;
   private JTextArea feedbackField;
 
+  /**
+   * Constructor for a new game view with the specified window caption.
+   * @param caption title for window
+   */
   public GameView(String caption) {
     super(caption);
     setSize(1200, 800);
@@ -208,6 +215,10 @@ public class GameView extends JFrame implements IGameView {
     this.add(rightPanel);
   }
 
+  /**
+   * Builds and returns the menu bar with File menu options.
+   * @return the configured menu bar
+   */
   public JMenuBar buildMenu() {
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
@@ -275,6 +286,10 @@ public class GameView extends JFrame implements IGameView {
     return menuBar;
   }
 
+  /**
+   *
+   * @return
+   */
   public String startView() {
     String playerName = JOptionPane.showInputDialog(null,
             "Enter a name for your Adventurer:", "Player Name",

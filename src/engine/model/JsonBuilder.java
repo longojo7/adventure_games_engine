@@ -32,6 +32,9 @@ import engine.model.rooms.obstacles.Monster;
 import engine.model.rooms.obstacles.PasswordSolution;
 import engine.model.rooms.obstacles.Puzzle;
 
+/**
+ * Builder that creates game models from JSON configuration.
+ */
 public class JsonBuilder implements IGameBuilder {
   private JSONObject json;
   private JSONObject playerData;
@@ -39,6 +42,11 @@ public class JsonBuilder implements IGameBuilder {
   private Map<String, JSONObject> jsonFixtures;
   private Map<String, JSONObject> jsonObstacles;
 
+  /**
+   * Constructs a JSON builder from a reader.
+   *
+   * @param jsonReader the reader containing JSON data
+   */
   public JsonBuilder(Reader jsonReader) {
     JSONParser parser = new JSONParser();
     try {
@@ -141,6 +149,13 @@ public class JsonBuilder implements IGameBuilder {
     return new EngineModel(player, rooms);
   }
 
+  /**
+   * Generates JSON player data from the player and rooms.
+   *
+   * @param player the player
+   * @param rooms map of rooms
+   * @return JSON object containing player data
+   */
   private JSONObject generatePlayerData(Player player, Map<String, IRoom> rooms) {
     JSONObject newPlayerData = new JSONObject();
     newPlayerData.put("name", player.getName());
@@ -166,6 +181,12 @@ public class JsonBuilder implements IGameBuilder {
     return json.toJSONString();
   }
 
+  /**
+   * Parses a comma-separated string into a list of items.
+   *
+   * @param string the comma-separated item names
+   * @return list of items
+   */
   private List<Item> itemListFromString(String string) {
     List<Item> items = new ArrayList<>();
     if (string.isEmpty()) {
@@ -176,6 +197,12 @@ public class JsonBuilder implements IGameBuilder {
     return items;
   }
 
+  /**
+   * Converts a list to a comma-separated string.
+   *
+   * @param list the list to convert
+   * @return comma-separated string
+   */
   private String listToString(List list) {
     if (list.isEmpty())
       return "";
@@ -188,6 +215,14 @@ public class JsonBuilder implements IGameBuilder {
     return sb.toString();
   }
 
+  /**
+   * Creates a room from JSON data.
+   *
+   * @param jsonRoom the JSON room object
+   * @param connections the connections map for this room
+   * @return the created room
+   * @throws Exception if room creation fails
+   */
   private IRoom createRoom(
           JSONObject jsonRoom,
           Map<Direction, Connection> connections
@@ -218,6 +253,13 @@ public class JsonBuilder implements IGameBuilder {
     );
   }
 
+  /**
+   * Creates a fixture from its name.
+   *
+   * @param fixtureName the name of the fixture
+   * @return the created fixture
+   * @throws Exception if fixture does not exist
+   */
   private Fixture createFixture(String fixtureName) throws Exception {
     if (jsonFixtures.get(fixtureName) == null)
       throw new Exception("Invalid JSON: Fixture " + fixtureName + " does not exist.");
@@ -228,6 +270,13 @@ public class JsonBuilder implements IGameBuilder {
     );
   }
 
+  /**
+   * Creates a puzzle from its name.
+   *
+   * @param puzzleName the name of the puzzle
+   * @return the created puzzle
+   * @throws Exception if puzzle does not exist
+   */
   private Puzzle createPuzzle(String puzzleName) throws Exception {
     puzzleName = puzzleName.toUpperCase();
     if (jsonObstacles.get(puzzleName) == null)
@@ -263,6 +312,13 @@ public class JsonBuilder implements IGameBuilder {
     );
   }
 
+  /**
+   * Creates a monster from its name.
+   *
+   * @param monsterName the name of the monster
+   * @return the created monster
+   * @throws Exception if monster does not exist
+   */
   private Monster createMonster(String monsterName) throws Exception {
     if (jsonObstacles.get(monsterName) == null)
       throw new Exception("Invalid JSON: Monster " + monsterName + " does not exist.");
@@ -299,11 +355,20 @@ public class JsonBuilder implements IGameBuilder {
     );
   }
 
+  /**
+   * Sets up the item factory from JSON data.
+   */
   private void itemFactorySetup() {
     if (json.get("items") instanceof JSONArray)
       ItemFactory.getInstance().itemsFromJson((JSONArray) json.get("items"));
   }
 
+  /**
+   * Connects rooms based on JSON configuration.
+   *
+   * @param rooms map of all rooms
+   * @param connectionsForEachRoom map of connections for each room
+   */
   private void connectRooms(Map<String, IRoom> rooms, Map<String, Map<Direction, Connection>> connectionsForEachRoom) {
     for (String roomName : rooms.keySet()) {
       Map<Direction, Connection> connections = connectionsForEachRoom.get(roomName);
@@ -351,6 +416,12 @@ public class JsonBuilder implements IGameBuilder {
     }
   }
 
+  /**
+   * Gets the message to display when an item is used.
+   *
+   * @param itemName the name of the item
+   * @return the message when item is used
+   */
   private String getMessageOnSolve(String itemName) {
     return ((JSONObject) (((JSONArray) json.get("items")).stream().filter(
             object -> ((JSONObject) object).get("name").toString().equals(itemName)
