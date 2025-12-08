@@ -394,7 +394,7 @@ public class GameView extends JFrame implements IGameView {
   public static void main(String[] args) throws Exception {
     JsonBuilder builder;
     try {
-      builder = new JsonBuilder(new FileReader("data/alignquest.json"));
+      builder = new JsonBuilder(new FileReader("data/alignquest.json"), "data/alignquest.json");
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }

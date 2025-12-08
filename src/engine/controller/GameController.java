@@ -386,13 +386,7 @@ public class GameController implements IGameController {
    */
   private void handleSave() throws IOException {
     try {
-      // Auto-generate filename based on player name and current room
-      String filename = SaveManager.generateSaveFilename(
-              model.getPlayerName(),
-              model.roomName()
-      );
-
-      String savedPath = SaveManager.saveGame(model, jsonBuilder, filename);
+      String savedPath = SaveManager.saveGame(model, jsonBuilder, model.getFileName());
       output.append("Game saved successfully to ").append(savedPath).append(".\n");
     } catch (IOException e) {
       output.append("Error saving game: ").append(e.getMessage()).append("\n");
@@ -408,10 +402,7 @@ public class GameController implements IGameController {
   private void handleRestore() throws IOException {
     try {
       // Generate the expected filename for this player and room
-      String filename = SaveManager.generateSaveFilename(
-              model.getPlayerName(),
-              model.roomName()
-      );
+      String filename = model.getFileName();
 
       // Check if this specific save file exists
       if (!SaveManager.saveFileExists(filename)) {
@@ -481,7 +472,7 @@ public class GameController implements IGameController {
     if (state == null || state.isEmpty()) {
       return;
     }
-    jsonBuilder = new JsonBuilder(new StringReader(state));
+    jsonBuilder = new JsonBuilder(new StringReader(state), jsonBuilder.getFileName());
     try {
       model = jsonBuilder.createModel(model.getPlayerName());
     } catch (Exception e) {

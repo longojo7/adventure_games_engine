@@ -54,9 +54,9 @@ public class GraphicsController implements IGameController, ActionListener {
       handleUse();
     else if (command.startsWith("answer"))
       handleAnswer();
-    else if(command.equals("save game"))
+    else if(command.startsWith("save"))
       handleSave();
-    else if(command.equals("reload game"))
+    else if(command.startsWith("reload"))
       handleReload();
     else if(command.startsWith("exit"))
       handleExit();
@@ -122,14 +122,12 @@ public class GraphicsController implements IGameController, ActionListener {
 
   private void handleSave() {
     try {
-      String filename = SaveManager.generateSaveFilename(
-              model.getFileName(),
-              model.roomName()
-      );
+      String filename = model.getFileName();
 
       String savedPath = SaveManager.saveGame(model, jsonBuilder, filename);
       view.updateFeedback("Game saved successfully to " + savedPath);
-    } catch (IOException e) {
+      view.showSaveView();
+    } catch (Exception e) {
       view.updateFeedback("Error saving game: " + e.getMessage());
     }
   }
@@ -137,28 +135,27 @@ public class GraphicsController implements IGameController, ActionListener {
   private void handleReload() {
     try {
       // Generate the expected filename for this player and room
-      String filename = SaveManager.generateSaveFilename(
-              model.getPlayerName(),
-              model.roomName()
-      );
+      String filename = model.getFileName();
 
       // Check if this specific save file exists
       if (!SaveManager.saveFileExists(filename)) {
         view.updateFeedback("No save file found for " + model.getPlayerName()
                 + " in " + model.roomName() + ". Please save first.");
+        view.reloadFail();
         return;
       }
 
       // Load the game state
-      String gameState = SaveManager.loadGame(filename);
+      String gameState = SaveManager.loadGame(SaveManager.getSaveFilePath(filename));
 
       // Restore the game state
-      jsonBuilder = new JsonBuilder(new StringReader(gameState));
+      jsonBuilder = new JsonBuilder(new StringReader(gameState), SaveManager.getSaveFilePath(filename));
       model = jsonBuilder.createModel(model.getPlayerName());
 
       // Update the view to reflect the restored state
       updateView();
       view.updateFeedback("Game restored successfully from " + filename);
+      view.showReloadView();
     } catch (IOException e) {
       view.updateFeedback("Error loading game: " + e.getMessage());
     } catch (Exception e) {

@@ -18,6 +18,7 @@ import engine.model.rooms.obstacles.PasswordSolution;
 public class EngineModel implements IEngineModel {
   Player player;
   Map<String, IRoom> rooms;
+  String fileName;
 
   /**
    * Constructs an engine model with player and rooms.
@@ -25,9 +26,10 @@ public class EngineModel implements IEngineModel {
    * @param player the player
    * @param rooms map of room names to rooms
    */
-  public EngineModel(Player player, Map<String, IRoom> rooms) {
+  public EngineModel(Player player, Map<String, IRoom> rooms, String fileName) {
     this.player = player;
     this.rooms = rooms;
+    this.fileName = fileName;
   }
 
   @Override
@@ -205,7 +207,7 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String getFileName() {
-    return
+    return fileName;
   }
 
 }

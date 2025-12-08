@@ -40,13 +40,15 @@ public class JsonBuilder implements IGameBuilder {
   private Map<String, JSONObject> jsonRooms;
   private Map<String, JSONObject> jsonFixtures;
   private Map<String, JSONObject> jsonObstacles;
+  private String fileName;
 
   /**
    * Constructs a JSON builder from a reader.
    *
    * @param jsonReader the reader containing JSON data
    */
-  public JsonBuilder(Reader jsonReader) {
+  public JsonBuilder(Reader jsonReader, String fileName) {
+    this.fileName = fileName;
     JSONParser parser = new JSONParser();
     try {
       json = (JSONObject) parser.parse(jsonReader);
@@ -145,7 +147,7 @@ public class JsonBuilder implements IGameBuilder {
         }
       }
     }
-    return new EngineModel(player, rooms);
+    return new EngineModel(player, rooms, fileName);
   }
 
   /**
@@ -428,5 +430,9 @@ public class JsonBuilder implements IGameBuilder {
     return ((JSONObject) (((JSONArray) json.get("items")).stream().filter(
             object -> ((JSONObject) object).get("name").toString().equals(itemName)
     ).findFirst().get())).get("when_used").toString();
+  }
+
+  public String getFileName() {
+    return fileName;
   }
 }
