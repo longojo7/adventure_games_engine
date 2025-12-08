@@ -269,9 +269,9 @@ public class GameView extends JFrame implements IGameView {
     JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",
             SwingConstants.CENTER);
     JLabel nameStatus = new JLabel("<html><div style='text-align:center;'>" +
-            "The status will go here.<br>" +
-            "The score will go here.<br>" +
-            "The rank will go here.<br>" +
+            "Status: " + status + "<br>" +
+            "Score: " + score + "<br>" +
+            "Rank: " + rank + "<br>" +
             "Come back soon!</div></html>", SwingConstants.CENTER);
     JLabel endImageLabel = new JLabel(endImage, SwingConstants.CENTER);
     thanks.setAlignmentX(Component.CENTER_ALIGNMENT);
