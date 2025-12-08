@@ -272,6 +272,12 @@ public class GameView extends JFrame implements IGameView {
   }
 
   @Override
+  public void reloadFail() {
+    JOptionPane.showMessageDialog(null, "Game reload failed!",
+            "Reload Game", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
   public void gameOver(String status, String score, String rank) {
     ImageIcon endImage = new ImageIcon("data/images/nighty_night.png");
     JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",

@@ -25,6 +25,11 @@ public interface IGameView {
    */
   void showReloadView();
 
+  /**
+   * Displays a confirmation dialog indicating the game reload failed.
+   */
+  void reloadFail();
+
   void gameOver(String status, String score, String rank);
 
   /**
