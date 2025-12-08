@@ -181,4 +181,6 @@ public interface IEngineModel {
    * @return true if damage was applied, false otherwise
    */
   boolean damagePlayer();
+
+  String getFileName();
 }

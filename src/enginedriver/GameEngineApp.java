@@ -51,12 +51,11 @@ public class GameEngineApp {
    */
   public void start() throws IOException {
     // Initialize the game model.
-    model = createModel(gameFileName);
 
     JsonBuilder builder = null;
 
     try {
-      builder = new JsonBuilder(new FileReader(gameFileName));
+      builder = new JsonBuilder(new FileReader(gameFileName), gameFileName);
       
     } catch (Exception e) {
       e.printStackTrace();
@@ -68,9 +67,20 @@ public class GameEngineApp {
     if ("-graphics".equals(mode)) {
       // create a GameView and GraphicsController
       IGameView view = new GameView("Adventure Game");
-      controller = new GraphicsController(model, view);
+      String playerName = view.startView();
+      try {
+        model = builder.createModel(playerName);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      controller = new GraphicsController(model, view, builder);
     } else {
       // create a GameController
+      try {
+        model = builder.createModel("");
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       controller = new GameController(model, builder, source, output);
     }
 
@@ -86,7 +96,7 @@ public class GameEngineApp {
     JsonBuilder builder;
 
     try {
-      builder = new JsonBuilder(new FileReader(gameFileName));
+      builder = new JsonBuilder(new FileReader(gameFileName), gameFileName);
       return builder.createModel("");
     } catch (Exception e) {
       e.printStackTrace();

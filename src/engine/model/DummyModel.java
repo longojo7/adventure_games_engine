@@ -188,4 +188,9 @@ public class DummyModel implements IEngineModel {
   public boolean damagePlayer() {
     return false;
   }
+
+  @Override
+  public String getFileName() {
+    return "";
+  }
 }

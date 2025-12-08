@@ -1,11 +1,8 @@
 package engine.controller;
 
-import java.io.FileWriter;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,13 +15,11 @@ import engine.model.JsonBuilder;
  * Handles user input, command parsing, and interaction with the game model.
  */
 public class GameController implements IGameController {
-  private static final String saveFile = "savegame.json";
   private IEngineModel model;
   private JsonBuilder jsonBuilder;
   private final Readable input;
   private final Appendable output;
   private boolean gameRunning;
-  private String savedState;
 
 
   /**
@@ -42,7 +37,6 @@ public class GameController implements IGameController {
     this.input = input;
     this.output = output;
     this.gameRunning = false;
-    this.savedState = null;
     this.jsonBuilder = jsonBuilder;
   }
 
@@ -391,14 +385,11 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void handleSave() throws IOException {
-    // Save current game state to memory
-    savedState = captureGameState();
-    // Saves to file
-    try (FileWriter writer = new FileWriter(saveFile)) {
-      writer.write(savedState);
-      output.append("Game saved successfully to ").append(saveFile).append(".\n");
+    try {
+      String savedPath = SaveManager.saveGame(model, jsonBuilder, model.getFileName());
+      output.append("Game saved successfully to ").append(savedPath).append(".\n");
     } catch (IOException e) {
-      output.append("Error saving game to file: ").append(e.getMessage()).append("\n");
+      output.append("Error saving game: ").append(e.getMessage()).append("\n");
       throw e;
     }
   }
@@ -409,29 +400,31 @@ public class GameController implements IGameController {
    * @throws IOException if an I/O error occurs.
    */
   private void handleRestore() throws IOException {
-    String stateToRestore = null;
+    try {
+      // Generate the expected filename for this player and room
+      String filename = model.getFileName();
 
-    // load from file
-    if (Files.exists(Paths.get(saveFile))) {
-      try {
-        stateToRestore = new String(Files.readAllBytes(Paths.get(saveFile)));
-        output.append("Loading saved game from ").append(saveFile).append("...\n");
-      } catch (IOException e) {
-        output.append("Error reading save file: ").append(e.getMessage()).append("\n");
-      }
-    }
-    // Loads save from memory
-    if (stateToRestore == null) {
-      if (savedState == null) {
-        output.append("No saved game found. Please save a game first.\n");
+      // Check if this specific save file exists
+      if (!SaveManager.saveFileExists(filename)) {
+        output.append("No save file found for ").append(model.getPlayerName())
+                .append(" in ").append(model.roomName())
+                .append(". Please save first.\n");
         return;
       }
-      stateToRestore = savedState;
-    }
 
-    restoreGameState(stateToRestore);
-    output.append("Game restored successfully.\n");
-    displayRoomDescription(false);
+      // Load the game state
+      String gameState = SaveManager.loadGame(filename);
+      output.append("Loading saved game from ").append(SaveManager.getSaveFilePath(filename))
+              .append("...\n");
+
+      // Restore the game state
+      restoreGameState(gameState);
+      output.append("Game restored successfully.\n");
+      displayRoomDescription(false);
+    } catch (IOException e) {
+      output.append("Error loading game: ").append(e.getMessage()).append("\n");
+      throw e;
+    }
     displayPlayerStatus();
   }
 
@@ -479,7 +472,7 @@ public class GameController implements IGameController {
     if (state == null || state.isEmpty()) {
       return;
     }
-    jsonBuilder = new JsonBuilder(new StringReader(state));
+    jsonBuilder = new JsonBuilder(new StringReader(state), jsonBuilder.getFileName());
     try {
       model = jsonBuilder.createModel(model.getPlayerName());
     } catch (Exception e) {

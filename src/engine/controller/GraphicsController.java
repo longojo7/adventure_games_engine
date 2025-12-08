@@ -3,6 +3,8 @@ package engine.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.StringReader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,8 @@ import javax.swing.*;
 import engine.Direction;
 import engine.model.IEngineModel;
 import engine.view.IGameView;
+import engine.model.JsonBuilder;
+
 
 /**
  * Graphics controller for adventure game engine.
@@ -18,10 +22,13 @@ import engine.view.IGameView;
 public class GraphicsController implements IGameController, ActionListener {
   private IEngineModel model;
   private IGameView view;
+  private JsonBuilder jsonBuilder;
 
-  public GraphicsController(IEngineModel model, IGameView view) {
+
+  public GraphicsController(IEngineModel model, IGameView view, JsonBuilder jsonBuilder) {
     this.model = model;
     this.view = view;
+    this.jsonBuilder = jsonBuilder;
 
     view.addActionListener(this);
   }
@@ -47,6 +54,10 @@ public class GraphicsController implements IGameController, ActionListener {
       handleUse();
     else if (command.startsWith("answer"))
       handleAnswer();
+    else if(command.startsWith("save"))
+      handleSave();
+    else if(command.startsWith("reload"))
+      handleReload();
     else if(command.startsWith("exit"))
       handleExit();
   }
@@ -107,6 +118,49 @@ public class GraphicsController implements IGameController, ActionListener {
    */
   private void failToMove() {
     view.updateFeedback("There is no room in that direction.");
+  }
+
+  private void handleSave() {
+    try {
+      String filename = model.getFileName();
+
+      String savedPath = SaveManager.saveGame(model, jsonBuilder, filename);
+      view.updateFeedback("Game saved successfully to " + savedPath);
+      view.showSaveView();
+    } catch (Exception e) {
+      view.updateFeedback("Error saving game: " + e.getMessage());
+    }
+  }
+
+  private void handleReload() {
+    try {
+      // Generate the expected filename for this player and room
+      String filename = model.getFileName();
+
+      // Check if this specific save file exists
+      if (!SaveManager.saveFileExists(filename)) {
+        view.updateFeedback("No save file found for " + model.getPlayerName()
+                + " in " + model.roomName() + ". Please save first.");
+        view.reloadFail();
+        return;
+      }
+
+      // Load the game state
+      String gameState = SaveManager.loadGame(SaveManager.getSaveFilePath(filename));
+
+      // Restore the game state
+      jsonBuilder = new JsonBuilder(new StringReader(gameState), SaveManager.getSaveFilePath(filename));
+      model = jsonBuilder.createModel(model.getPlayerName());
+
+      // Update the view to reflect the restored state
+      updateView();
+      view.updateFeedback("Game restored successfully from " + filename);
+      view.showReloadView();
+    } catch (IOException e) {
+      view.updateFeedback("Error loading game: " + e.getMessage());
+    } catch (Exception e) {
+      view.updateFeedback("Error restoring game state: " + e.getMessage());
+    }
   }
 
   /**
