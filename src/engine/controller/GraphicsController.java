@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.*;
+
 import engine.Direction;
 import engine.model.IEngineModel;
 import engine.view.IGameView;
@@ -45,6 +47,8 @@ public class GraphicsController implements IGameController, ActionListener {
       handleUse();
     else if (command.startsWith("answer"))
       handleAnswer();
+    else if(command.startsWith("exit"))
+      handleExit();
   }
 
   /**
@@ -174,5 +178,14 @@ public class GraphicsController implements IGameController, ActionListener {
       return " " + model.monsterAttack()
               + " You take " + model.monsterDamage() + " damage.";
     else return "";
+  }
+
+  private void handleExit() {
+    // Menu to ask if they want to quit
+    int choice = JOptionPane.showConfirmDialog(null,
+            "Are you sure you want to quit?", "Confirm Exit",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    if (choice == JOptionPane.YES_OPTION)
+      view.gameOver(model.playerStatus(), model.getPlayerScore()+"", model.getPlayerRank());
   }
 }
