@@ -3,6 +3,8 @@ package engine.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import engine.Direction;
 import engine.model.IEngineModel;
@@ -44,8 +46,27 @@ public class GraphicsController implements IGameController, ActionListener {
 
   private void updateView() {
     view.updateImage("");
-    view.updateDescription(model.environmentDescription());
-    view.updateInventory(model.playerItemList(), model.roomItemList());
+
+    // add exit info
+    StringBuilder description = new StringBuilder(model.environmentDescription());
+    description.append("\n\nAvailable exits:");
+    boolean hasExits = false;
+    for (Direction dir : Direction.values()) {
+      String roomName = model.peek(dir);
+      if (roomName != null) {
+        description.append(" ").append(dir.name());
+        hasExits = true;
+      }
+    }
+    if (!hasExits) {
+      description.append(" None");
+    }
+    view.updateDescription(description.toString());
+
+    // combine items and fixtures for room contents
+    List<String> roomContents = new ArrayList<>(model.roomItemList());
+    roomContents.addAll(model.fixtureList());
+    view.updateInventory(model.playerItemList(), roomContents);
     view.updateHealth(model.playerStatus());
   }
 
@@ -76,11 +97,16 @@ public class GraphicsController implements IGameController, ActionListener {
   }
 
   private void handleTake() {
-    view.updateFeedback(
-            model.pickupItem(view.selectedItemRoom()) ?
-                    "Picked up " + view.selectedItemRoom() + "." :
-                    "You cannot pick up that item. It may be too heavy.");
-    view.appendFeedback(damageString());
+    String selectedItem = view.selectedItemRoom();
+    if (model.fixtureList().contains(selectedItem)) {
+      view.updateFeedback("You cannot pick up " + selectedItem + ". It is a fixed item.");
+    } else {
+      view.updateFeedback(
+              model.pickupItem(view.selectedItemRoom()) ?
+                      "Picked up " + view.selectedItemRoom() :
+                      "You cannot pick up that item. It may be too heavy.");
+      view.appendFeedback(damageString());
+    }
     updateView();
   }
 

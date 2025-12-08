@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import engine.Direction;
 import engine.model.items.Item;
 import engine.model.player.Player;
+import engine.model.rooms.Fixture;
 import engine.model.rooms.IRoom;
 import engine.model.rooms.obstacles.ItemSolution;
 import engine.model.rooms.obstacles.PasswordSolution;
@@ -37,10 +38,10 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String getPlayerRank() {
-    if (getPlayerScore() >= 50) {
-      return "MASTER";
-    } else if (getPlayerScore() >= 100) {
+    if (getPlayerScore() >= 100) {
       return "SKILLED";
+    } else if (getPlayerScore() >= 50) {
+      return "MASTER";
     }
     return "NOVICE";
   }
@@ -56,6 +57,11 @@ public class EngineModel implements IEngineModel {
   public String peek(Direction direction) {
     IRoom room = player.peek(direction);
     return room == null ? null : room.getName();
+  }
+
+  public List<String> fixtureList() {
+    return player.getCurrentRoom().getFixtures().stream().
+            map(Fixture::getName).collect(Collectors.toList());
   }
 
   @Override

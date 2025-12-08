@@ -11,6 +11,6 @@ public class PasswordSolution implements ISolution {
   public boolean checkSolution(ISolution solution) {
     if (!(solution instanceof PasswordSolution)) return false;
     PasswordSolution other = (PasswordSolution) solution;
-    return password.equals(other.password);
+    return password.equalsIgnoreCase(other.password);
   }
 }

@@ -63,6 +63,11 @@ public class DummyModel implements IEngineModel {
   }
 
   @Override
+  public List<String> fixtureList() {
+    return List.of();
+  }
+
+  @Override
   public List<String> playerItemList() {
     return List.of("Player Item 1", "Player Item 2", "Player Item 3");
   }

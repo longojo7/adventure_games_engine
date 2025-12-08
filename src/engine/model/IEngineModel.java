@@ -20,6 +20,8 @@ public interface IEngineModel {
 
   String peek(Direction direction);
 
+  List<String> fixtureList();
+
   List<String> playerItemList();
 
   List<String> roomItemList();
