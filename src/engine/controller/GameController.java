@@ -29,6 +29,7 @@ public class GameController implements IGameController {
 
   /**
    * Constructs a new GameController.
+   *
    * @param model  the game model to control.
    * @param input  the source of user input.
    * @param output the destination for game output.
@@ -47,6 +48,7 @@ public class GameController implements IGameController {
 
   /**
    * Starts the game loop and processes user commands.
+   *
    * @throws IOException if an I/O error occurs.
    */
   @Override
@@ -62,7 +64,7 @@ public class GameController implements IGameController {
             + "\n------------------------------\n");
     displayCommandMenu();
     output.append("\nYou start your adventure in the ").append(model.roomName()).append("\n");
-    displayRoomDescription();
+    displayRoomDescription(false);
     output.append("\n------------------------------" +
             "\nYour Choice: ");
     while (gameRunning && scanner.hasNextLine()) {
@@ -77,11 +79,12 @@ public class GameController implements IGameController {
                 + "Your Choice: ");
       }
     }
-    scanner.close(); 
+    scanner.close();
   }
 
   /**
    * Displays the command instructions.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void displayCommandMenu() throws IOException {
@@ -97,25 +100,31 @@ public class GameController implements IGameController {
 
   /**
    * Displays the current room's description and available exits.
+   *
    * @throws IOException if an I/O error occurs.
    */
-  private void displayRoomDescription() throws IOException {
+  private void displayRoomDescription(boolean damaging) throws IOException {
     output.append(model.environmentDescription()).append("\n");
-    String monsterAttack = model.monsterAttack();
-    if (monsterAttack != null && model.roomObstacleActive()) {
-      output.append( model.getPlayerName() + " Takes " + model.dealDamage() + " Damage");
-      if (model.playerStatus().equals("Asleep")){
-        output.append("\nYou have Fallen Asleep. ");
-        handleQuit();
-        return;
-      }
-    }
+    if (damaging)
+      displayDamage();
     displayAvailableExits();
     displayRoomItems();
   }
 
+  private void displayDamage() throws IOException {
+    String monsterAttack = model.monsterAttack();
+    if (monsterAttack == null || !model.roomObstacleActive())
+      return;
+    output.append(model.getPlayerName() + " Takes " + model.monsterDamage() + " Damage");
+    if (!model.playerStatus().equals("Asleep"))
+      return;
+    output.append("\nYou have Fallen Asleep. ");
+    handleQuit();
+  }
+
   /**
    * Displays available exits from the current room.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void displayAvailableExits() throws IOException {
@@ -137,6 +146,7 @@ public class GameController implements IGameController {
 
   /**
    * Displays items available in the current room.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void displayRoomItems() throws IOException {
@@ -150,6 +160,7 @@ public class GameController implements IGameController {
 
   /**
    * Processes a user command.
+   *
    * @param command the command to process.
    * @throws IOException if an I/O error occurs.
    */
@@ -229,6 +240,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles movement in a given direction.
+   *
    * @param direction the direction to move.
    * @throws IOException if an I/O error occurs.
    */
@@ -236,7 +248,7 @@ public class GameController implements IGameController {
     if (model.walk(direction)) {
       output.append("You move ").append(direction.name().toLowerCase()).append(".\n");
       // may have to revisit this since I'm not sure what movement will look it
-      displayRoomDescription();
+      displayRoomDescription(true);
     } else {
       output.append(">> You cannot go that direction! <<\n");
     }
@@ -244,6 +256,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles the take/pickup command.
+   *
    * @param itemName the name of the item to take.
    * @throws IOException if an I/O error occurs.
    */
@@ -263,6 +276,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles the drop command.
+   *
    * @param itemName the name of the item to drop.
    * @throws IOException if an I/O error occurs.
    */
@@ -280,6 +294,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles the examine command.
+   *
    * @param target the name of the object to examine.
    * @throws IOException if an I/O error occurs.
    */
@@ -299,15 +314,18 @@ public class GameController implements IGameController {
 
   /**
    * Handles the look command - re displays the current room.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void handleLook() throws IOException {
     output.append("\nYou are standing in the ").append(model.roomName()).append("\n");
-       displayRoomDescription();
+    model.damagePlayer();
+    displayRoomDescription(true);
   }
 
   /**
    * Handles the use command.
+   *
    * @param itemName the name of the item to use.
    * @throws IOException if an I/O error occurs.
    */
@@ -321,15 +339,17 @@ public class GameController implements IGameController {
       output.append("Cannot use an item you don't have.\n");
     } else if (result.equals("no use")) {
       output.append("Cannot use that item here.\n");
+      displayRoomDescription(true);
     } else {
       output.append("You used: ").append(itemName).append("\n");
-      displayRoomDescription();
+      displayRoomDescription(false);
       displayPlayerStatus();
     }
   }
 
   /**
    * Handles the inventory command.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void handleInventory() throws IOException {
@@ -346,6 +366,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles the answer command.
+   *
    * @param answer the answer to provide.
    * @throws IOException if an I/O error occurs.
    */
@@ -357,14 +378,16 @@ public class GameController implements IGameController {
 
     if (model.answerQuestion(answer)) {
       output.append("Correct! The obstacle has been cleared.\n");
-      displayRoomDescription();
+      displayRoomDescription(false);
     } else {
       output.append("That answer is incorrect.\n");
+      displayRoomDescription(true);
     }
   }
 
   /**
    * Handles the save command.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void handleSave() throws IOException {
@@ -382,6 +405,7 @@ public class GameController implements IGameController {
 
   /**
    * Handles the restore command.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void handleRestore() throws IOException {
@@ -407,11 +431,13 @@ public class GameController implements IGameController {
 
     restoreGameState(stateToRestore);
     output.append("Game restored successfully.\n");
-    displayRoomDescription();
+    displayRoomDescription(false);
+    displayPlayerStatus();
   }
 
   /**
    * Handles the quit command.
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void handleQuit() throws IOException {
@@ -423,6 +449,7 @@ public class GameController implements IGameController {
 
   /**
    * Displays the player's current status (health, etc.).
+   *
    * @throws IOException if an I/O error occurs.
    */
   private void displayPlayerStatus() throws IOException {
@@ -435,6 +462,7 @@ public class GameController implements IGameController {
   /**
    * Captures the current game state for saving.
    * This is a simple implementation.
+   *
    * @return a string representation of the game state.
    */
   private String captureGameState() {
@@ -443,6 +471,7 @@ public class GameController implements IGameController {
 
   /**
    * Restores a previously saved game state.
+   *
    * @param state the saved state to restore.
    * @throws IOException if an I/O error occurs.
    */
