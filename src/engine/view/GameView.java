@@ -35,7 +35,7 @@ public class GameView extends JFrame implements IGameView {
   private JLabel view;
   private JLabel playerStatus;
   private JTextArea descriptionText;
-  private ImageIcon roomIcon;
+  private ImageIcon defaultIcon;
   private JTextField answer;
   private JLabel score;
   private JLabel rank;
@@ -64,8 +64,8 @@ public class GameView extends JFrame implements IGameView {
 
     // Top left image panel
     JPanel image = new JPanel(new BorderLayout());
-    this.roomIcon = new ImageIcon("data/images/foyer.png");
-    this.view = new JLabel(roomIcon);
+    this.defaultIcon = new ImageIcon("data/images/generic_location.png");
+    this.view = new JLabel(defaultIcon);
     image.add(view, BorderLayout.CENTER);
     image.setBorder(BorderFactory.createTitledBorder("View"));
     image.setPreferredSize(new Dimension(600, 400));
@@ -74,10 +74,9 @@ public class GameView extends JFrame implements IGameView {
     // Bottom left description panel
     JPanel description = new JPanel(new BorderLayout());
     this.descriptionText = new JTextArea();
-    descriptionText.setText("This is a very very very very very very long test string to check " +
-            "wrapping. If the wrapping doesn't work Prof K is going to be really pissed off");
     this.descriptionText.setLineWrap(true);
     this.descriptionText.setWrapStyleWord(true);
+    this.descriptionText.setEditable(false);
     JScrollPane scroll = new JScrollPane(descriptionText);
     scroll.setBorder(BorderFactory.createTitledBorder("Description"));
     description.add(scroll, BorderLayout.CENTER);
@@ -85,10 +84,9 @@ public class GameView extends JFrame implements IGameView {
 
     JPanel feedback = new JPanel(new BorderLayout());
     this.feedbackField = new JTextArea();
-    this.feedbackField.setText("Feedback for using, picking up, dropping, examining, and solving" +
-            "will be displayed here");
     this.feedbackField.setLineWrap(true);
     this.feedbackField.setWrapStyleWord(true);
+    this.feedbackField.setEditable(false);
     JScrollPane feedScroll = new JScrollPane(feedbackField);
     feedScroll.setBorder(BorderFactory.createTitledBorder("Feedback"));
     feedback.add(feedScroll, BorderLayout.CENTER);
@@ -139,8 +137,7 @@ public class GameView extends JFrame implements IGameView {
 
     // player inventory list
     JPanel player = new JPanel(new BorderLayout());
-    String[] items = {"hammer", "key"};
-    this.playerInventoryList = new JList(items);
+    this.playerInventoryList = new JList();
     player.add(playerInventoryList, BorderLayout.CENTER);
     player.setBorder(BorderFactory.createTitledBorder("Player Inventory"));
 
@@ -162,8 +159,7 @@ public class GameView extends JFrame implements IGameView {
 
     // room inventory list
     JPanel room = new JPanel(new BorderLayout());
-    String[] names = {"josh", "ethan"};
-    this.roomInventoryList = new JList(names);
+    this.roomInventoryList = new JList();
     room.add(roomInventoryList, BorderLayout.CENTER);
     room.setBorder(BorderFactory.createTitledBorder("Room Contents"));
 
@@ -264,6 +260,24 @@ public class GameView extends JFrame implements IGameView {
   }
 
   @Override
+  public void showSaveView() {
+    JOptionPane.showMessageDialog(null, "Game saved successfully!",
+            "Save Game", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
+  public void showReloadView() {
+    JOptionPane.showMessageDialog(null, "Game reloaded successfully!",
+            "Reload Game", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
+  public void reloadFail() {
+    JOptionPane.showMessageDialog(null, "Game reload failed!",
+            "Reload Game", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  @Override
   public void gameOver(String status, String score, String rank) {
     ImageIcon endImage = new ImageIcon("data/images/nighty_night.png");
     JLabel thanks = new JLabel("<html><h2>Thanks for playing!</h2></html>",
@@ -322,16 +336,6 @@ public class GameView extends JFrame implements IGameView {
   @Override
   public void updateHealth(String health) {
     this.playerStatus.setText(health);
-  }
-
-  @Override
-  public void updateScore(String score) {
-    this.score.setText(score);
-  }
-
-  @Override
-  public void updateRank(String rank) {
-    this.rank.setText(rank);
   }
 
   @Override
