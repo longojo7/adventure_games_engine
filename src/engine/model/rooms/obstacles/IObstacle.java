@@ -20,4 +20,12 @@ public interface IObstacle {
   String getDescription();
 
   String getMessageOnSolve();
+
+  default int getDamage() {
+    return 0;
+  }
+
+  default String getAttack() {
+    return null;
+  }
 }

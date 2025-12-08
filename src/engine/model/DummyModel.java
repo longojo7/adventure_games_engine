@@ -152,7 +152,7 @@ public class DummyModel implements IEngineModel {
   }
 
   @Override
-  public int dealDamage() {
+  public int monsterDamage() {
     return 0;
   }
 
@@ -169,5 +169,10 @@ public class DummyModel implements IEngineModel {
   @Override
   public Map<String, IRoom> getRooms() {
     return Map.of();
+  }
+
+  @Override
+  public boolean damagePlayer() {
+    return false;
   }
 }

@@ -44,11 +44,13 @@ public interface IEngineModel {
 
   String monsterAttack();
 
-  int dealDamage();
+  int monsterDamage();
 
   boolean roomObstacleActive();
 
   Player getPlayer();
 
   Map<String, IRoom> getRooms();
+
+  boolean damagePlayer();
 }

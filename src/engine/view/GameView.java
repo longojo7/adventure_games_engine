@@ -151,7 +151,7 @@ public class GameView extends JFrame implements IGameView {
 
     // room inventory list
     JPanel room = new JPanel(new BorderLayout());
-    String[] names = {"josh","ethan"};
+    String[] names = {"josh", "ethan"};
     this.roomInventoryList = new JList(names);
     room.add(roomInventoryList, BorderLayout.CENTER);
     room.setBorder(BorderFactory.createTitledBorder("Room Contents"));
@@ -322,20 +322,25 @@ public class GameView extends JFrame implements IGameView {
   }
 
   @Override
+  public void appendFeedback(String append) {
+    updateFeedback(feedbackField.getText() + append);
+  }
+
+  @Override
   public String getAnswer() {
     return answer.getText();
   }
 
   @Override
   public String selectedItemPlayer() {
-    if(playerInventoryList.isSelectionEmpty())
+    if (playerInventoryList.isSelectionEmpty())
       return "";
     return playerInventoryList.getSelectedValue().toString();
   }
 
   @Override
   public String selectedItemRoom() {
-    if(roomInventoryList.isSelectionEmpty())
+    if (roomInventoryList.isSelectionEmpty())
       return "";
     return roomInventoryList.getSelectedValue().toString();
   }
