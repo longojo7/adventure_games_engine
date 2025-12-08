@@ -8,6 +8,8 @@ import java.util.List;
  */
 public interface IGameView {
 
+  String startView();
+
   /**
    * Updates the displayed image.
    * @param path the file path to the image

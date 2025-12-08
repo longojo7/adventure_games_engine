@@ -219,7 +219,7 @@ public class GameView extends JFrame implements IGameView {
    * Builds and returns the menu bar with File menu options.
    * @return the configured menu bar
    */
-  public JMenuBar buildMenu() {
+  private JMenuBar buildMenu() {
     JMenuBar menuBar = new JMenuBar();
     JMenu menu = new JMenu("File");
     JMenuItem about = new JMenuItem("About the Engine...");
@@ -290,6 +290,7 @@ public class GameView extends JFrame implements IGameView {
    *
    * @return
    */
+  @Override
   public String startView() {
     String playerName = JOptionPane.showInputDialog(null,
             "Enter a name for your Adventurer:", "Player Name",
