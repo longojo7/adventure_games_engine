@@ -1,6 +1,5 @@
 package engine.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,7 +9,6 @@ import engine.model.items.Item;
 import engine.model.player.Player;
 import engine.model.rooms.IRoom;
 import engine.model.rooms.obstacles.ItemSolution;
-import engine.model.rooms.obstacles.Monster;
 import engine.model.rooms.obstacles.PasswordSolution;
 
 public class EngineModel implements IEngineModel {
@@ -49,7 +47,9 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public boolean walk(Direction direction) {
-    return player.walk(direction);
+    boolean success = player.walk(direction);
+    damagePlayer();
+    return success;
   }
 
   @Override
@@ -72,13 +72,13 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public boolean pickupItem(String itemName) {
-    takeDamage();
+    damagePlayer();
     return player.pickupItem(itemName);
   }
 
   @Override
   public boolean dropItem(String itemName) {
-    takeDamage();
+    damagePlayer();
     return player.dropItem(itemName);
   }
 
@@ -101,20 +101,24 @@ public class EngineModel implements IEngineModel {
   @Override
   public String useItem(String itemName) {
     Item item = Item.fromName(itemName);
-    if (item == null || !player.hasItem(itemName)) {return "no item";}
+    if (item == null || !player.hasItem(itemName)) {
+      return "no item";
+    }
     ItemSolution solution = new ItemSolution(List.of(Item.fromName(itemName)));
     if (player.getCurrentRoom().getObstacle() == null
-            || !player.getCurrentRoom().getObstacle().attemptSolution(solution)) {return "no use";}
-    takeDamage();
+            || !player.getCurrentRoom().getObstacle().attemptSolution(solution)) {
+      damagePlayer();
+      return "no use";
+    }
     return player.getCurrentRoom().getObstacle().getMessageOnSolve();
   }
 
   @Override
   public boolean answerQuestion(String answer) {
-    if (!player.getCurrentRoom().getObstacle().attemptSolution(new PasswordSolution(answer)))
-      return false;
-    takeDamage();
-    return true;
+    if (player.getCurrentRoom().getObstacle().attemptSolution(new PasswordSolution(answer)))
+      return true;
+    damagePlayer();
+    return false;
   }
 
   @Override
@@ -134,23 +138,24 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public String monsterAttack() {
-    if (!obstacleIsMonster())
+    if (player.getCurrentRoom().getObstacle() == null)
       return null;
-    Monster monster = (Monster) player.getCurrentRoom().getObstacle();
-    return monster.getAttack();
+    return player.getCurrentRoom().getObstacle().getName() + " "
+            + player.getCurrentRoom().getObstacle().getAttack();
   }
 
   @Override
-  public int dealDamage() {
-
-    if (player.getCurrentRoom().getObstacle() instanceof Monster && player.getCurrentRoom().getObstacle().isActive())
-      player.damage(((Monster)(player.getCurrentRoom().getObstacle())).getDamage());
-    return ((Monster)(player.getCurrentRoom().getObstacle())).getDamage();
+  public int monsterDamage() {
+    return player.getCurrentRoom().getObstacle() != null
+            && player.getCurrentRoom().getObstacle().isActive()
+            ? player.getCurrentRoom().getObstacle().getDamage()
+            : 0;
   }
 
   @Override
   public boolean roomObstacleActive() {
-    return player.getCurrentRoom().getObstacle()!=null && player.getCurrentRoom().getObstacle().isActive();
+    return player.getCurrentRoom().getObstacle() != null
+            && player.getCurrentRoom().getObstacle().isActive();
   }
 
   @Override
@@ -163,12 +168,13 @@ public class EngineModel implements IEngineModel {
     return rooms;
   }
 
-  private boolean obstacleIsMonster() {
-    return player.getCurrentRoom().getObstacle() instanceof Monster;
-  }
-
-  private void takeDamage() {
-    if (obstacleIsMonster())
-      player.damage(((Monster) player.getCurrentRoom().getObstacle()).getDamage());
+  @Override
+  public boolean damagePlayer() {
+    if (player.getCurrentRoom().getObstacle() == null
+            || !player.getCurrentRoom().getObstacle().isActive())
+      return false;
+    int damage = player.getCurrentRoom().getObstacle().getDamage();
+    player.damage(damage);
+    return damage != 0;
   }
 }

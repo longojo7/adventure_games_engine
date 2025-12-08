@@ -36,9 +36,9 @@ public class GraphicsController implements IGameController, ActionListener {
       handleTake();
     else if (command.startsWith("drop"))
       handleDrop();
-    else if(command.startsWith("use"))
+    else if (command.startsWith("use"))
       handleUse();
-    else  if(command.startsWith("answer"))
+    else if (command.startsWith("answer"))
       handleAnswer();
   }
 
@@ -60,7 +60,7 @@ public class GraphicsController implements IGameController, ActionListener {
       failToMove();
 
     updateView();
-    view.updateFeedback("");
+    view.updateFeedback(damageString());
   }
 
   private void failToMove() {
@@ -78,14 +78,15 @@ public class GraphicsController implements IGameController, ActionListener {
   private void handleTake() {
     view.updateFeedback(
             model.pickupItem(view.selectedItemRoom()) ?
-                    "Picked up " + view.selectedItemRoom() :
+                    "Picked up " + view.selectedItemRoom() + "." :
                     "You cannot pick up that item. It may be too heavy.");
+    view.appendFeedback(damageString());
     updateView();
   }
 
   private void handleDrop() {
     model.dropItem(view.selectedItemPlayer());
-    view.updateFeedback("Dropped " + view.selectedItemPlayer());
+    view.updateFeedback("Dropped " + view.selectedItemPlayer() + "." + damageString());
     updateView();
   }
 
@@ -93,7 +94,7 @@ public class GraphicsController implements IGameController, ActionListener {
     String message = model.useItem(view.selectedItemPlayer());
     view.updateFeedback(
             "no use".equals(message) ?
-                    "Cannot use this item." :
+                    "Cannot use this item." + damageString():
                     message);
     updateView();
   }
@@ -102,7 +103,14 @@ public class GraphicsController implements IGameController, ActionListener {
     view.updateFeedback(
             model.answerQuestion(view.getAnswer()) ?
                     "Success!" :
-                    "Answer is incorrect.");
+                    "Answer is incorrect." + damageString());
     updateView();
+  }
+
+  private String damageString() {
+    if (model.roomObstacleActive() && model.monsterDamage() != 0)
+      return " " + model.monsterAttack()
+              + " You take " + model.monsterDamage() + " damage.";
+    else return "";
   }
 }

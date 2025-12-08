@@ -11,10 +11,12 @@ public class Monster extends Puzzle {
     this.attack = attack;
   }
 
+  @Override
   public int getDamage() {
     return damage;
   }
 
+  @Override
   public String getAttack() {
     return attack;
   }
