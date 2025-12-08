@@ -78,6 +78,9 @@ public class GraphicsController implements IGameController, ActionListener {
     roomContents.addAll(model.fixtureList());
     view.updateInventory(model.playerItemList(), roomContents);
     view.updateHealth(model.playerStatus());
+
+    if(model.playerStatus().equals("Asleep"))
+      view.gameOver(model.playerStatus(), model.getPlayerScore()+"", model.getPlayerRank());
   }
 
   /**
