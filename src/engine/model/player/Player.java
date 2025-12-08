@@ -8,6 +8,9 @@ import engine.model.items.Item;
 import engine.model.rooms.Connection;
 import engine.model.rooms.IRoom;
 
+/**
+ * Represents a player in the game.
+ */
 public class Player implements IPlayer {
   private String name;
   private final IHealth health;
@@ -15,6 +18,15 @@ public class Player implements IPlayer {
   private IRoom currentRoom;
   private int obstacleScore;
 
+  /**
+   * Constructs a player with all properties including obstacle score.
+   *
+   * @param name the player name
+   * @param health the health manager
+   * @param inventory the inventory manager
+   * @param startingRoom the starting room
+   * @param obstacleScore the initial obstacle score
+   */
   public Player(String name, IHealth health, IInventory inventory, IRoom startingRoom, int obstacleScore) {
     this.name = name;
     this.health = health;
@@ -23,6 +35,14 @@ public class Player implements IPlayer {
     this.obstacleScore = obstacleScore;
   }
 
+  /**
+   * Constructs a player with zero obstacle score.
+   *
+   * @param name the player name
+   * @param health the health manager
+   * @param inventory the inventory manager
+   * @param startingRoom the starting room
+   */
   public Player(String name, IHealth health, IInventory inventory, IRoom startingRoom) {
     this.name = name;
     this.health = health;

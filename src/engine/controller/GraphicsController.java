@@ -10,6 +10,9 @@ import engine.Direction;
 import engine.model.IEngineModel;
 import engine.view.IGameView;
 
+/**
+ * Graphics controller for adventure game engine.
+ */
 public class GraphicsController implements IGameController, ActionListener {
   private IEngineModel model;
   private IGameView view;
@@ -44,6 +47,9 @@ public class GraphicsController implements IGameController, ActionListener {
       handleAnswer();
   }
 
+  /**
+   * Updates all view components with current game state.
+   */
   private void updateView() {
     view.updateImage("");
 
@@ -70,6 +76,11 @@ public class GraphicsController implements IGameController, ActionListener {
     view.updateHealth(model.playerStatus());
   }
 
+  /**
+   * Handles player movement in specified direction.
+   *
+   * @param directionString the direction to move
+   */
   private void handleMove(String directionString) {
     Direction direction = switch (directionString) {
       case "east" -> Direction.East;
@@ -84,10 +95,18 @@ public class GraphicsController implements IGameController, ActionListener {
     view.updateFeedback(damageString());
   }
 
+  /**
+   * Displays feedback when movement fails.
+   */
   private void failToMove() {
     view.updateFeedback("There is no room in that direction.");
   }
 
+  /**
+   * Handles examining an item.
+   *
+   * @param examiningPlayer true if examining player inventory, false for room
+   */
   private void handleExamine(boolean examiningPlayer) {
     String item = examiningPlayer ? view.selectedItemPlayer() : view.selectedItemRoom();
     view.updateFeedback(
@@ -96,6 +115,9 @@ public class GraphicsController implements IGameController, ActionListener {
                     model.examine(item));
   }
 
+  /**
+   * Handles taking an item from the room.
+   */
   private void handleTake() {
     String selectedItem = view.selectedItemRoom();
     if (model.fixtureList().contains(selectedItem)) {
@@ -110,12 +132,18 @@ public class GraphicsController implements IGameController, ActionListener {
     updateView();
   }
 
+  /**
+   * Handles dropping an item from player inventory.
+   */
   private void handleDrop() {
     model.dropItem(view.selectedItemPlayer());
     view.updateFeedback("Dropped " + view.selectedItemPlayer() + "." + damageString());
     updateView();
   }
 
+  /**
+   * Handles using an item from player inventory.
+   */
   private void handleUse() {
     String message = model.useItem(view.selectedItemPlayer());
     view.updateFeedback(
@@ -125,6 +153,9 @@ public class GraphicsController implements IGameController, ActionListener {
     updateView();
   }
 
+  /**
+   * Handles submitting an answer to a question.
+   */
   private void handleAnswer() {
     view.updateFeedback(
             model.answerQuestion(view.getAnswer()) ?
@@ -133,6 +164,11 @@ public class GraphicsController implements IGameController, ActionListener {
     updateView();
   }
 
+  /**
+   * Generates damage message if monster is active.
+   *
+   * @return damage message or empty string
+   */
   private String damageString() {
     if (model.roomObstacleActive() && model.monsterDamage() != 0)
       return " " + model.monsterAttack()

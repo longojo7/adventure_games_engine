@@ -12,10 +12,19 @@ import engine.model.rooms.IRoom;
 import engine.model.rooms.obstacles.ItemSolution;
 import engine.model.rooms.obstacles.PasswordSolution;
 
+/**
+ * Implementation of the game engine model.
+ */
 public class EngineModel implements IEngineModel {
   Player player;
   Map<String, IRoom> rooms;
 
+  /**
+   * Constructs an engine model with player and rooms.
+   *
+   * @param player the player
+   * @param rooms map of room names to rooms
+   */
   public EngineModel(Player player, Map<String, IRoom> rooms) {
     this.player = player;
     this.rooms = rooms;
@@ -59,6 +68,11 @@ public class EngineModel implements IEngineModel {
     return room == null ? null : room.getName();
   }
 
+  /**
+   * Gets list of fixture names in current room.
+   *
+   * @return list of fixture names
+   */
   public List<String> fixtureList() {
     return player.getCurrentRoom().getFixtures().stream().
             map(Fixture::getName).collect(Collectors.toList());

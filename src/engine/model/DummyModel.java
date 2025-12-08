@@ -7,12 +7,20 @@ import engine.Direction;
 import engine.model.player.Player;
 import engine.model.rooms.IRoom;
 
+/**
+ * Dummy implementation of the engine model for testing purposes.
+ */
 public class DummyModel implements IEngineModel {
   private String name;
   private int score = 0;
   private int westStepsTaken;
   private boolean monsterActive = true;
 
+  /**
+   * Gets the number of steps taken west.
+   *
+   * @return the west steps count
+   */
   public int getWestStepsTaken() {
     return westStepsTaken;
   }
