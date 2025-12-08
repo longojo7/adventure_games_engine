@@ -8,6 +8,8 @@ import java.util.List;
  */
 public interface IGameView {
 
+  void gameOver(String status, String score, String rank);
+
   /**
    * Updates the displayed image.
    * @param path the file path to the image
