@@ -88,7 +88,8 @@ public class GraphicsController implements IGameController, ActionListener {
     List<String> roomContents = new ArrayList<>(model.roomItemList());
     roomContents.addAll(model.fixtureList());
     view.updateInventory(model.playerItemList(), roomContents);
-    view.updateHealth(model.playerStatus());
+    view.updateHealth("Health: " + model.getPlayer().currentHealth() + " / "
+            + model.getPlayer().maxHealth() + " | Status: " + model.playerStatus());
 
     if(model.playerStatus().equals("Asleep"))
       view.gameOver(model.playerStatus(), model.getPlayerScore()+"", model.getPlayerRank());
@@ -218,10 +219,22 @@ public class GraphicsController implements IGameController, ActionListener {
    * Handles submitting an answer to a question.
    */
   private void handleAnswer() {
-    view.updateFeedback(
-            model.answerQuestion(view.getAnswer()) ?
-                    "Success!" :
-                    "Answer is incorrect." + damageString());
+    String answer = view.getAnswer();
+
+    if (answer.isEmpty()) {
+      view.updateFeedback("Please enter an answer.");
+      return;
+    }
+
+    if (!model.roomObstacleActive()) {
+      view.updateFeedback("There is no active puzzle or monster to answer here.");
+    }
+
+    if (model.answerQuestion(answer)) {
+      view.updateFeedback("Success!");
+    } else {
+      view.updateFeedback("Answer is incorrect." + damageString());
+    }
     updateView();
   }
 

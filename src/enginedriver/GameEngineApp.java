@@ -39,7 +39,7 @@ public class GameEngineApp {
       throw new IllegalArgumentException("All parameters must be non-null");
     }
     this.gameFileName = gameFileName;
-    this.mode= mode;
+    this.mode = mode;
     this.source = source;
     this.output = output;
   }
@@ -51,37 +51,27 @@ public class GameEngineApp {
    */
   public void start() throws IOException {
     // Initialize the game model.
+    // Allow missing game file to propagate to main where it can be reported as command line error
 
-    JsonBuilder builder = null;
+    JsonBuilder builder = new JsonBuilder(new FileReader(gameFileName), gameFileName);
 
     try {
-      builder = new JsonBuilder(new FileReader(gameFileName), gameFileName);
-      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-
-
-    // Create the appropriate controller based on the mode
-    if ("-graphics".equals(mode)) {
-      // create a GameView and GraphicsController
-      IGameView view = new GameView("Adventure Game");
-      String playerName = view.startView();
-      try {
+      // Create the appropriate controller based on the mode
+      if ("-graphics".equals(mode)) {
+        // create a GameView and GraphicsController
+        IGameView view = new GameView("Adventure Game");
+        String playerName = view.startView();
         model = builder.createModel(playerName);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      controller = new GraphicsController(model, view, builder);
-    } else {
-      // create a GameController
-      try {
+        controller = new GraphicsController(model, view, builder);
+      } else {
+        // create a GameController
         model = builder.createModel("");
-      } catch (Exception e) {
-        e.printStackTrace();
+        controller = new GameController(model, builder, source, output);
       }
-      controller = new GameController(model, builder, source, output);
+    } catch (Exception e) {
+      throw new IOException("Unable to create a game from '" + gameFileName + "': "
+              + e.getMessage(),
+      e);
     }
 
     controller.go();
@@ -190,9 +180,11 @@ public class GameEngineApp {
         ((java.io.FileWriter) output).close();
       }
 
+    } catch (FileNotFoundException e) {
+      System.err.println("Error: Game file not found: " + gameFile);
+      System.exit(1);
     } catch (IOException e) {
       System.err.println("Error running game: " + e.getMessage());
-      e.printStackTrace();
       System.exit(1);
     }
   }
