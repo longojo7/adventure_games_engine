@@ -173,7 +173,7 @@ public class GraphicsController implements IGameController, ActionListener {
     String item = examiningPlayer ? view.selectedItemPlayer() : view.selectedItemRoom();
     view.updateFeedback(
             item.isEmpty() ?
-                    "You have not selected an item to examine." :
+                    "Examine what? Please specify a target." :
                     model.examine(item));
   }
 
@@ -198,8 +198,14 @@ public class GraphicsController implements IGameController, ActionListener {
    * Handles dropping an item from player inventory.
    */
   private void handleDrop() {
-    model.dropItem(view.selectedItemPlayer());
-    view.updateFeedback("Dropped " + view.selectedItemPlayer() + "." + damageString());
+    String selectedItem = view.selectedItemPlayer();
+
+    if (selectedItem == null || selectedItem.isEmpty()) {
+      view.updateFeedback("Drop what? Please select an item to drop.");
+    } else {
+      model.dropItem(selectedItem);
+      view.updateFeedback("Dropped " + selectedItem + "." + damageString());
+    }
     updateView();
   }
 
@@ -207,11 +213,25 @@ public class GraphicsController implements IGameController, ActionListener {
    * Handles using an item from player inventory.
    */
   private void handleUse() {
-    String message = model.useItem(view.selectedItemPlayer());
-    view.updateFeedback(
-            "no use".equals(message) ?
-                    "Cannot use this item." + damageString() :
-                    message);
+    String playerItem = view.selectedItemPlayer();
+    String roomItem = view.selectedItemRoom();
+
+    if (playerItem.isEmpty()) {
+      if (!roomItem.isEmpty()) {
+        view.updateFeedback("Take the item before trying to use it.");
+      } else {
+        view.updateFeedback("Select an item from your inventory to use.");
+      }
+      return;
+    }
+
+    String result = model.useItem(playerItem);
+    if ("no use".equals(result)) {
+      view.updateFeedback("Cannot use that item here." + damageString());
+    } else {
+      view.updateFeedback("You used: " + playerItem + "\n" + result);
+    }
+
     updateView();
   }
 
@@ -228,6 +248,7 @@ public class GraphicsController implements IGameController, ActionListener {
 
     if (!model.roomObstacleActive()) {
       view.updateFeedback("There is no active puzzle or monster to answer here.");
+      return;
     }
 
     if (model.answerQuestion(answer)) {
