@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class ItemFactory {
   private static ItemFactory instance;
-  private Map<String, Item> items;
+  private final Map<String, Item> items = new HashMap<>();
 
   /**
    * Gets the singleton instance of the item factory.
@@ -30,7 +30,7 @@ public class ItemFactory {
    * @param jsonItems the JSON array containing item data
    */
   public void itemsFromJson(JSONArray jsonItems) {
-    items = new HashMap<>();
+    items.clear();
     for(Object object : jsonItems) {
       JSONObject jsonItem = (JSONObject) object;
       Item item = new Item(

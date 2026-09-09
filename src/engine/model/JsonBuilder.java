@@ -193,8 +193,13 @@ public class JsonBuilder implements IGameBuilder {
     if (string.isEmpty()) {
       return items;
     }
-    for (String itemName : string.split(", "))
-      items.add(ItemFactory.getInstance().getItem(itemName));
+    for (String itemName : string.split(", ")) {
+      Item item = ItemFactory.getInstance().getItem(itemName);
+      if (item != null) {
+        items.add(item);
+      }
+    }
+
     return items;
   }
 
@@ -231,10 +236,19 @@ public class JsonBuilder implements IGameBuilder {
     String name = jsonRoom.get("room_name").toString();
     String description = jsonRoom.get("description").toString();
     IObstacle obstacle = null;
-    if (jsonRoom.get("puzzle") != null)
-      obstacle = createPuzzle(jsonRoom.get("puzzle").toString());
-    else if (jsonRoom.get("monster") != null)
-      obstacle = createMonster(jsonRoom.get("monster").toString());
+    if (jsonRoom.get("puzzle") != null) {
+      String puzzleName = jsonRoom.get("puzzle").toString().toUpperCase();
+
+      if (jsonObstacles.containsKey(puzzleName)) {
+        obstacle = createPuzzle(puzzleName);
+      }
+    } else if (jsonRoom.get("monster") != null) {
+      String monsterName = jsonRoom.get("monster").toString();
+
+      if (jsonObstacles.containsKey(monsterName)) {
+        obstacle = createMonster(monsterName);
+      }
+    }
     List<Fixture> fixtures = new ArrayList<>();
     if (jsonRoom.get("fixtures") != null)
       for (String fixtureName : jsonRoom.get("fixtures").toString().split(", "))
@@ -363,8 +377,11 @@ public class JsonBuilder implements IGameBuilder {
    * Sets up the item factory from JSON data.
    */
   private void itemFactorySetup() {
-    if (json.get("items") instanceof JSONArray)
-      ItemFactory.getInstance().itemsFromJson((JSONArray) json.get("items"));
+    JSONArray jsonItems = json.get("items") instanceof JSONArray
+            ? (JSONArray) json.get("items")
+            : new JSONArray();
+
+    ItemFactory.getInstance().itemsFromJson(jsonItems);
   }
 
   /**
