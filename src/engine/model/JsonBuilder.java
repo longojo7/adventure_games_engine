@@ -85,7 +85,11 @@ public class JsonBuilder implements IGameBuilder {
 
     jsonRooms = new HashMap<>();
     for (Object object : (JSONArray) json.get("rooms")) {
-      JSONObject jsonRoom = (JSONObject) object;
+      if (!(object instanceof JSONObject jsonRoom)) {
+        throw new IllegalArgumentException("Each entry in 'rooms' must be a JSON object.");
+      }
+
+      String roomNumber = requireString(jsonRoom, "room_number", "Room");
       jsonRooms.put(jsonRoom.get("room_number").toString(), jsonRoom);
     }
 
@@ -135,11 +139,15 @@ public class JsonBuilder implements IGameBuilder {
     Player player;
 
     if (playerData == null) {
+      IRoom startRoom = rooms.get("1");
+      if (startRoom == null) {
+        throw new IllegalArgumentException("The game must define starting room '1'.");
+      }
       player = new Player(
               playerName,
               new ThresholdHealth(100, 100, thresholdMap),
               new LimitedInventory(new ArrayList<Item>(), 20),
-              rooms.get("1")
+              startRoom
       );
       for (IRoom room : rooms.values()) {
         if (room.getObstacle() != null)
@@ -180,6 +188,24 @@ public class JsonBuilder implements IGameBuilder {
       }
     }
     return new EngineModel(player, rooms, fileName);
+  }
+
+  /**
+   * Gets a required property's text representation and rejects missing, null, or blanks.
+   *
+   * @param object containing the property
+   * @param property the name of required property
+   * @param context the room or definition being validated
+   * @return the property's text representation
+   */
+  private String requireString(JSONObject object, String property, String context) {
+    Object value = object.get(property);
+    if (value == null || value.toString().trim().isEmpty()) {
+      throw new IllegalArgumentException(
+              context + " is missing required property '" + property + "'.");
+    }
+    // Preserve the original value; trim is only used to detect blank input.
+    return value.toString();
   }
 
   /**
@@ -265,9 +291,12 @@ public class JsonBuilder implements IGameBuilder {
           JSONObject jsonRoom,
           Map<Direction, Connection> connections
   ) throws Exception {
-    String name = jsonRoom.get("room_name").toString();
+    String roomNumber = requireString(jsonRoom, "room_number", "Room");
+    String context = "Room" + roomNumber;
+    String name = requireString(jsonRoom, "room_name", context);
     String description = jsonRoom.get("description").toString();
     IObstacle obstacle = null;
+
     if (jsonRoom.get("puzzle") != null) {
       String puzzleName = jsonRoom.get("puzzle").toString().toUpperCase();
 
@@ -281,11 +310,13 @@ public class JsonBuilder implements IGameBuilder {
         obstacle = createMonster(monsterName);
       }
     }
+
     List<Fixture> fixtures = new ArrayList<>();
     if (jsonRoom.get("fixtures") != null)
       for (String fixtureName : jsonRoom.get("fixtures").toString().split(", "))
         if (jsonFixtures.get(fixtureName) != null)
           fixtures.add(createFixture(fixtureName));
+
     List<Item> items = new ArrayList<>();
     if (jsonRoom.get("items") != null)
       items = itemListFromString(jsonRoom.get("items").toString());
