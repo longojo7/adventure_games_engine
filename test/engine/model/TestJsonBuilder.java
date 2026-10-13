@@ -99,4 +99,86 @@ public class TestJsonBuilder {
 
     assertEquals(expectedMessage, exception.getMessage());
   }
+
+  @Test
+  void rejectsMissingRoomNumber() {
+    assertValidationError(
+            "{\"rooms\": [{}]}",
+            "Room is missing required property 'room_number'."
+    );
+  }
+
+  @Test
+  void rejectsBlankRoomNumber() {
+    assertValidationError(
+            "{\"rooms\": [{\"room_number\": \"   \"}]}",
+            "Room is missing required property 'room_number'."
+    );
+  }
+
+  @Test
+  void rejectsNonObjectRoomEntry() {
+    assertValidationError(
+            "{\"rooms\": [\"invalid room\"]}",
+            "Each entry in 'rooms' must be a JSON object."
+    );
+  }
+
+  @Test
+  void rejectsMissingRoomName() {
+    // Room names are validated during createModel(), not construction.
+    JsonBuilder builder = new JsonBuilder(
+            new StringReader("""
+                  {
+                    "rooms": [
+                      {
+                        "room_number": "1",
+                        "description": "A hallway.",
+                        "N": "0", "S": "0", "E": "0", "W": "0"
+                      }
+                    ]
+                  }
+                  """),
+            "test.json"
+    );
+
+    IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> builder.createModel("Test Player")
+    );
+
+    assertEquals(
+            "Room 1 is missing required property 'room_name'.",
+            exception.getMessage()
+    );
+  }
+
+  @Test
+  void rejectsBlankRoomName() {
+    JsonBuilder builder = new JsonBuilder(
+            new StringReader("""
+                  {
+                    "rooms": [
+                      {
+                        "room_number": "1",
+                        "room_name": "   ",
+                        "description": "A hallway.",
+                        "N": "0", "S": "0", "E": "0", "W": "0"
+                      }
+                    ]
+                  }
+                  """),
+            "test.json"
+    );
+
+    IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> builder.createModel("Test Player")
+    );
+
+    assertEquals(
+            "Room 1 is missing required property 'room_name'.",
+            exception.getMessage()
+    );
+  }
 }

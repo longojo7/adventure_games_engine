@@ -292,7 +292,7 @@ public class JsonBuilder implements IGameBuilder {
           Map<Direction, Connection> connections
   ) throws Exception {
     String roomNumber = requireString(jsonRoom, "room_number", "Room");
-    String context = "Room" + roomNumber;
+    String context = "Room " + roomNumber;
     String name = requireString(jsonRoom, "room_name", context);
     String description = jsonRoom.get("description").toString();
     IObstacle obstacle = null;
