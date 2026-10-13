@@ -3,8 +3,10 @@ package engine.model;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.Reader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,34 +52,64 @@ public class JsonBuilder implements IGameBuilder {
   public JsonBuilder(Reader jsonReader, String fileName) {
     this.fileName = fileName;
     JSONParser parser = new JSONParser();
+    Object parsedData;
+
+    // Handle only the checked exceptions declared by parser.parse() when JSON is invalid
     try {
-      json = (JSONObject) parser.parse(jsonReader);
-      if (json.get("player") != null)
-        playerData = (JSONObject) json.get("player");
-      jsonRooms = new HashMap<>();
-      for (Object o : (JSONArray) json.get("rooms")) {
-        JSONObject jsonRoom = (JSONObject) o;
-        jsonRooms.put(jsonRoom.get("room_number").toString(), jsonRoom);
+      parsedData = parser.parse(jsonReader);
+    } catch (IOException | ParseException e) {
+      throw new IllegalArgumentException(
+              "Could not read or parse game file '" + fileName + "': "
+                      + e.getMessage(),
+              e);
+    }
+
+    // Validation exceptions propagate directly to main's error handler.
+    if (!(parsedData instanceof JSONObject)) {
+      throw new IllegalArgumentException(
+              "The game file must contain a JSON object.");
+    }
+
+    json = (JSONObject) parsedData;
+
+    if (!(json.get("rooms") instanceof JSONArray)) {
+      throw new IllegalArgumentException(
+              "The game file must contain a 'rooms' array.");
+    }
+
+    // If init fails, construction stops automatically
+    // no partially initialized JsonBuilder is returned.
+    if (json.get("player") != null) {
+      playerData = (JSONObject) json.get("player");
+    }
+
+    jsonRooms = new HashMap<>();
+    for (Object object : (JSONArray) json.get("rooms")) {
+      JSONObject jsonRoom = (JSONObject) object;
+      jsonRooms.put(jsonRoom.get("room_number").toString(), jsonRoom);
+    }
+
+    jsonFixtures = new HashMap<>();
+    if (json.get("fixtures") != null) {
+      for (Object object : (JSONArray) json.get("fixtures")) {
+        JSONObject jsonFixture = (JSONObject) object;
+        jsonFixtures.put(jsonFixture.get("name").toString(), jsonFixture);
       }
-      jsonFixtures = new HashMap<>();
-      if (json.get("fixtures") != null)
-        for (Object o : (JSONArray) json.get("fixtures")) {
-          JSONObject jsonFixture = (JSONObject) o;
-          jsonFixtures.put(jsonFixture.get("name").toString(), jsonFixture);
-        }
-      jsonObstacles = new HashMap<>();
-      if (json.get("monsters") != null)
-        for (Object o : (JSONArray) json.get("monsters")) {
-          JSONObject jsonObstacle = (JSONObject) o;
-          jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
-        }
-      if (json.get("puzzles") != null)
-        for (Object o : (JSONArray) json.get("puzzles")) {
-          JSONObject jsonObstacle = (JSONObject) o;
-          jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
-        }
-    } catch (Exception e) {
-      e.printStackTrace();
+    }
+
+    jsonObstacles = new HashMap<>();
+    if (json.get("monsters") != null) {
+      for (Object object : (JSONArray) json.get("monsters")) {
+        JSONObject jsonObstacle = (JSONObject) object;
+        jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
+      }
+    }
+
+    if (json.get("puzzles") != null) {
+      for (Object object : (JSONArray) json.get("puzzles")) {
+        JSONObject jsonObstacle = (JSONObject) object;
+        jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
+      }
     }
   }
 

@@ -9,6 +9,7 @@ import engine.model.JsonBuilder;
 import engine.view.GameView;
 import engine.view.IGameView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -52,8 +53,11 @@ public class GameEngineApp {
   public void start() throws IOException {
     // Initialize the game model.
     // Allow missing game file to propagate to main where it can be reported as command line error
-
-    JsonBuilder builder = new JsonBuilder(new FileReader(gameFileName), gameFileName);
+    JsonBuilder builder;
+    // close the reader after construction
+    try (FileReader reader = new FileReader(gameFileName)) {
+      builder = new JsonBuilder(reader, gameFileName);
+    }
 
     try {
       // Create the appropriate controller based on the mode
@@ -182,6 +186,9 @@ public class GameEngineApp {
 
     } catch (FileNotFoundException e) {
       System.err.println("Error: Game file not found: " + gameFile);
+      System.exit(1);
+    } catch (IllegalArgumentException e) {
+      System.err.println("Error loading game: " + e.getMessage());
       System.exit(1);
     } catch (IOException e) {
       System.err.println("Error running game: " + e.getMessage());
