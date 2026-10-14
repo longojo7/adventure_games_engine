@@ -294,7 +294,12 @@ public class JsonBuilder implements IGameBuilder {
     String roomNumber = requireString(jsonRoom, "room_number", "Room");
     String context = "Room " + roomNumber;
     String name = requireString(jsonRoom, "room_name", context);
-    String description = jsonRoom.get("description").toString();
+    // Allow an empty string description
+    Object descriptionVal = jsonRoom.get("description");
+    if (!(descriptionVal instanceof String description)) {
+      throw new IllegalArgumentException(context + " must define 'description' as a string.");
+    }
+
     IObstacle obstacle = null;
 
     if (jsonRoom.get("puzzle") != null) {

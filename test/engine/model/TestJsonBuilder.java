@@ -181,4 +181,88 @@ public class TestJsonBuilder {
             exception.getMessage()
     );
   }
+
+  @Test
+  void acceptsEmptyDescription() {
+    JsonBuilder builder = new JsonBuilder(
+            new StringReader("""
+                  {
+                    "rooms": [{
+                      "room_number": "1",
+                      "room_name": "Test Room",
+                      "description": "",
+                      "N": "0", "S": "0", "E": "0", "W": "0"
+                    }]
+                  }
+                  """),
+            "test.json"
+    );
+
+    assertDoesNotThrow(() -> builder.createModel("Test Player"));
+  }
+
+  @Test
+  void rejectsInvalidDescriptions() {
+    // Missing, null, and numeric descriptions must all be rejected.
+    for (String property : new String[]{
+            "",
+            "\"description\": null,",
+            "\"description\": 123,"
+    }) {
+      JsonBuilder builder = new JsonBuilder(
+              new StringReader("""
+                    {
+                      "rooms": [{
+                        "room_number": "1",
+                        "room_name": "Test Room",
+                        %s
+                        "N": "0", "S": "0", "E": "0", "W": "0"
+                      }]
+                    }
+                    """.formatted(property)),
+              "test.json"
+      );
+
+      IllegalArgumentException exception = assertThrows(
+              IllegalArgumentException.class,
+              () -> builder.createModel("Test Player"),
+              "Description property: " + property
+      );
+
+      assertEquals(
+              "Room 1 must define 'description' as a string.",
+              exception.getMessage()
+      );
+    }
+  }
+
+
+  @Test
+  void rejectsGameWithoutStartingRoom() {
+    JsonBuilder builder = new JsonBuilder(
+            new StringReader("""
+                  {
+                    "rooms": [
+                      {
+                        "room_number": "2",
+                        "room_name": "Other Room",
+                        "description": "A valid room.",
+                        "N": "0", "S": "0", "E": "0", "W": "0"
+                      }
+                    ]
+                  }
+                  """),
+            "test.json"
+    );
+
+    IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> builder.createModel("Test Player")
+    );
+
+    assertEquals(
+            "The game must define starting room '1'.",
+            exception.getMessage()
+    );
+  }
 }
