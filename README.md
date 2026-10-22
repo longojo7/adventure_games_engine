@@ -6,104 +6,110 @@ Players explore connected rooms, collect and use items, solve puzzles, encounter
 
 ## Features
 
-- **JSON-defined worlds:** Configure rooms, connections, items, fixtures, puzzles, and monsters.
-- **Multiple interfaces:** Play through a Swing GUI, terminal commands, or scripted batch input.
-- **Exploration:** Navigate rooms and discover their descriptions, available exits, and contents.
-- **Inventory management:** Take, drop, inspect, and use items within a carrying-weight limit.
-- **Puzzles and monsters:** Resolve obstacles using items or text answers.
-- **Player state:** Track health, inventory, score, and rank.
-- **Event-driven interactions:** Solving obstacles can unlock exits and update player scores.
-- **Save and restore:** Serialize game data and player progress to JSON.
-- **Automated tests:** JUnit tests cover model components, JSON loading, and application startup.
+- Load different adventure worlds from JSON.
+- Play through a Swing GUI, terminal, or batch command file.
+- Explore rooms, manage inventory, and resolve puzzles and monsters.
+- Track player health, score, and rank.
+- Save and restore game progress.
 
 ## Technology
 
-- Java
-- Swing
-- JSON.simple 1.1.1
-- JUnit Jupiter
-- Git
-- IntelliJ IDEA project configuration
-
-The project uses a Model–View–Controller architecture and does not currently include a Maven or Gradle build.
+Java, Swing, JSON.simple 1.1.1, and JUnit Jupiter. The engine follows a Model–View–Controller architecture.
 
 ## Getting Started
 
 ### Requirements
 
-- JDK 24, matching the current IntelliJ project configuration
-- A graphical desktop session for Swing mode
-- JUnit dependencies when running automated tests
+- JDK 24 to build the project
+- Java 24 or newer to run the executable JAR
+- A graphical desktop environment for graphics mode
 
-JSON.simple is included at `src/json-simple-1.1.1.jar`.
+### Build the Executable JAR
 
-Run the application from the repository root so relative paths to game data and images resolve correctly.
+In IntelliJ IDEA:
 
-### Compile
+1. Open **File → Project Structure → Artifacts**.
+2. Select **+ → JAR → From modules with dependencies**.
+3. Select `enginedriver.GameEngineApp` as the main class.
+4. Include the JSON.simple dependency in the JAR.
+5. Apply the configuration.
+6. Select **Build → Build Artifacts**, then build the JAR artifact.
 
-The following commands use Bash on Linux or macOS:
+IntelliJ places the generated JAR under `out/artifacts/`.
 
-```bash
-mkdir -p out/classes
+### Prepare the Game Files
 
-find src -name '*.java' > out/sources.list
+Place the executable JAR alongside the `data/` directory:
 
-javac \
-  -cp src/json-simple-1.1.1.jar \
-  -d out/classes \
-  @out/sources.list
+```text
+adventure-game/
+├── game_engine.jar
+└── data/
+    ├── museum.json
+    ├── simple_hallway.json
+    ├── alignquest.json
+    └── images/
+        └── ...
 ```
 
-On Windows, use `;` instead of `:` to separate classpath entries in the commands below.
+The examples below use `game_engine.jar`. Substitute your generated JAR's filename if it differs.
 
-### Play in the Terminal
+Open a terminal in this directory. Keep images under `data/images/`, where the engine expects to find them.
 
-```bash
-java -cp out/classes:src/json-simple-1.1.1.jar \
-  enginedriver.GameEngineApp data/simple_hallway.json -text
-```
+### Graphics Mode
 
-Enter a player name when prompted, then use the available commands to explore.
-
-### Play with the Graphical Interface
+Launch the Swing interface:
 
 ```bash
-java -cp out/classes:src/json-simple-1.1.1.jar \
-  enginedriver.GameEngineApp data/alignquest.json -graphics
+java -jar game_engine.jar data/museum.json -graphics
 ```
 
-Graphics mode requires a display and cannot run in a headless terminal alone.
+### Text Mode
 
-### Run a Batch Game
+Play interactively in the terminal:
 
-Batch mode reads the player name and subsequent commands from a text file.
+```bash
+java -jar game_engine.jar data/museum.json -text
+```
 
-For example, create `out/commands.txt` containing:
+Enter your player name when prompted. Enter `H` during gameplay to display the available commands.
+
+### Batch Mode
+
+Read the player name and game commands from a text file:
+
+```bash
+java -jar game_engine.jar data/museum.json -batch commands.txt
+```
+
+To write the game output to a file instead of the terminal:
+
+```bash
+java -jar game_engine.jar data/museum.json -batch commands.txt output.txt
+```
+
+A batch input file follows the same input sequence as text mode. For example:
 
 ```text
 Explorer
 L
-T Notebook
 I
-N
 Q
 ```
 
-Run it against the hallway game:
+The first line supplies the player name. Each subsequent line supplies a command.
+
+### Choosing a Game
+
+Replace `data/museum.json` with the path to another game file. Quote paths containing spaces:
 
 ```bash
-java -cp out/classes:src/json-simple-1.1.1.jar \
-  enginedriver.GameEngineApp \
-  data/simple_hallway.json -batch out/commands.txt
+java -jar game_engine.jar "my games/adventure.json" -text
 ```
 
-To write game output to a file, add an output path:
+Image resources must still be available under `data/images/` relative to the directory where you launch the application.
 
-```bash
-java -cp out/classes:src/json-simple-1.1.1.jar \
-  enginedriver.GameEngineApp \
-  data/simple_hallway.json -batch out/commands.txt out/game-output.txt
-```
+Launch the JAR from a terminal rather than double-clicking it: the application requires command-line arguments.
 
 ## Terminal Commands
 
@@ -236,37 +242,9 @@ Additional directories:
 
 ## Testing
 
-### IntelliJ IDEA
+Open the project in IntelliJ IDEA using JDK 24. Ensure `src/` and `test/` are marked as source and test roots, and resolve the project's JSON.simple and JUnit dependencies.
 
-1. Open the repository as a Java project.
-2. Select JDK 24.
-3. Confirm `src/` is marked as Sources Root and `test/` as Test Sources Root.
-4. Ensure JSON.simple and the JUnit dependencies referenced by the project are available.
-5. Run the JUnit test classes under `test/`.
-
-`SimpleGameEngineAppTest` is a standalone demonstration with a `main()` method, separate from the automated JUnit tests.
-
-### Command Line
-
-With the JUnit Platform Console Standalone 6.0.0 JAR available at `lib/junit-platform-console-standalone-6.0.0.jar`, compile and run the tests:
-
-```bash
-mkdir -p out/test-classes
-
-find test -name '*.java' > out/tests.list
-
-javac \
-  -cp out/classes:src/json-simple-1.1.1.jar:lib/junit-platform-console-standalone-6.0.0.jar \
-  -d out/test-classes \
-  @out/tests.list
-
-java -jar lib/junit-platform-console-standalone-6.0.0.jar execute \
-  --class-path out/classes:out/test-classes:src/json-simple-1.1.1.jar \
-  --scan-class-path \
-  --fail-if-no-tests
-```
-
-Compile the application before compiling the tests. The standalone JUnit JAR is an external test dependency and is not bundled with this repository.
+Run the JUnit tests under `test/`. `SimpleGameEngineAppTest` is a separate manual demonstration.
 
 ## Project Status
 
