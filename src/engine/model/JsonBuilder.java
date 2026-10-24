@@ -3,8 +3,10 @@ package engine.model;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.Reader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,34 +52,68 @@ public class JsonBuilder implements IGameBuilder {
   public JsonBuilder(Reader jsonReader, String fileName) {
     this.fileName = fileName;
     JSONParser parser = new JSONParser();
+    Object parsedData;
+
+    // Handle only the checked exceptions declared by parser.parse() when JSON is invalid
     try {
-      json = (JSONObject) parser.parse(jsonReader);
-      if (json.get("player") != null)
-        playerData = (JSONObject) json.get("player");
-      jsonRooms = new HashMap<>();
-      for (Object o : (JSONArray) json.get("rooms")) {
-        JSONObject jsonRoom = (JSONObject) o;
-        jsonRooms.put(jsonRoom.get("room_number").toString(), jsonRoom);
+      parsedData = parser.parse(jsonReader);
+    } catch (IOException | ParseException e) {
+      throw new IllegalArgumentException(
+              "Could not read or parse game file '" + fileName + "': "
+                      + e.getMessage(),
+              e);
+    }
+
+    // Validation exceptions propagate directly to main's error handler.
+    if (!(parsedData instanceof JSONObject)) {
+      throw new IllegalArgumentException(
+              "The game file must contain a JSON object.");
+    }
+
+    json = (JSONObject) parsedData;
+
+    if (!(json.get("rooms") instanceof JSONArray)) {
+      throw new IllegalArgumentException(
+              "The game file must contain a 'rooms' array.");
+    }
+
+    // If init fails, construction stops automatically
+    // no partially initialized JsonBuilder is returned.
+    if (json.get("player") != null) {
+      playerData = (JSONObject) json.get("player");
+    }
+
+    jsonRooms = new HashMap<>();
+    for (Object object : (JSONArray) json.get("rooms")) {
+      if (!(object instanceof JSONObject jsonRoom)) {
+        throw new IllegalArgumentException("Each entry in 'rooms' must be a JSON object.");
       }
-      jsonFixtures = new HashMap<>();
-      if (json.get("fixtures") != null)
-        for (Object o : (JSONArray) json.get("fixtures")) {
-          JSONObject jsonFixture = (JSONObject) o;
-          jsonFixtures.put(jsonFixture.get("name").toString(), jsonFixture);
-        }
-      jsonObstacles = new HashMap<>();
-      if (json.get("monsters") != null)
-        for (Object o : (JSONArray) json.get("monsters")) {
-          JSONObject jsonObstacle = (JSONObject) o;
-          jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
-        }
-      if (json.get("puzzles") != null)
-        for (Object o : (JSONArray) json.get("puzzles")) {
-          JSONObject jsonObstacle = (JSONObject) o;
-          jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
-        }
-    } catch (Exception e) {
-      e.printStackTrace();
+
+      String roomNumber = requireString(jsonRoom, "room_number", "Room");
+      jsonRooms.put(jsonRoom.get("room_number").toString(), jsonRoom);
+    }
+
+    jsonFixtures = new HashMap<>();
+    if (json.get("fixtures") != null) {
+      for (Object object : (JSONArray) json.get("fixtures")) {
+        JSONObject jsonFixture = (JSONObject) object;
+        jsonFixtures.put(jsonFixture.get("name").toString(), jsonFixture);
+      }
+    }
+
+    jsonObstacles = new HashMap<>();
+    if (json.get("monsters") != null) {
+      for (Object object : (JSONArray) json.get("monsters")) {
+        JSONObject jsonObstacle = (JSONObject) object;
+        jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
+      }
+    }
+
+    if (json.get("puzzles") != null) {
+      for (Object object : (JSONArray) json.get("puzzles")) {
+        JSONObject jsonObstacle = (JSONObject) object;
+        jsonObstacles.put(jsonObstacle.get("name").toString(), jsonObstacle);
+      }
     }
   }
 
@@ -103,11 +139,15 @@ public class JsonBuilder implements IGameBuilder {
     Player player;
 
     if (playerData == null) {
+      IRoom startRoom = rooms.get("1");
+      if (startRoom == null) {
+        throw new IllegalArgumentException("The game must define starting room '1'.");
+      }
       player = new Player(
               playerName,
               new ThresholdHealth(100, 100, thresholdMap),
               new LimitedInventory(new ArrayList<Item>(), 20),
-              rooms.get("1")
+              startRoom
       );
       for (IRoom room : rooms.values()) {
         if (room.getObstacle() != null)
@@ -148,6 +188,24 @@ public class JsonBuilder implements IGameBuilder {
       }
     }
     return new EngineModel(player, rooms, fileName);
+  }
+
+  /**
+   * Gets a required property's text representation and rejects missing, null, or blanks.
+   *
+   * @param object containing the property
+   * @param property the name of required property
+   * @param context the room or definition being validated
+   * @return the property's text representation
+   */
+  private String requireString(JSONObject object, String property, String context) {
+    Object value = object.get(property);
+    if (value == null || value.toString().trim().isEmpty()) {
+      throw new IllegalArgumentException(
+              context + " is missing required property '" + property + "'.");
+    }
+    // Preserve the original value; trim is only used to detect blank input.
+    return value.toString();
   }
 
   /**
@@ -193,8 +251,13 @@ public class JsonBuilder implements IGameBuilder {
     if (string.isEmpty()) {
       return items;
     }
-    for (String itemName : string.split(", "))
-      items.add(ItemFactory.getInstance().getItem(itemName));
+    for (String itemName : string.split(", ")) {
+      Item item = ItemFactory.getInstance().getItem(itemName);
+      if (item != null) {
+        items.add(item);
+      }
+    }
+
     return items;
   }
 
@@ -228,18 +291,37 @@ public class JsonBuilder implements IGameBuilder {
           JSONObject jsonRoom,
           Map<Direction, Connection> connections
   ) throws Exception {
-    String name = jsonRoom.get("room_name").toString();
-    String description = jsonRoom.get("description").toString();
+    String roomNumber = requireString(jsonRoom, "room_number", "Room");
+    String context = "Room " + roomNumber;
+    String name = requireString(jsonRoom, "room_name", context);
+    // Allow an empty string description
+    Object descriptionVal = jsonRoom.get("description");
+    if (!(descriptionVal instanceof String description)) {
+      throw new IllegalArgumentException(context + " must define 'description' as a string.");
+    }
+
     IObstacle obstacle = null;
-    if (jsonRoom.get("puzzle") != null)
-      obstacle = createPuzzle(jsonRoom.get("puzzle").toString());
-    else if (jsonRoom.get("monster") != null)
-      obstacle = createMonster(jsonRoom.get("monster").toString());
+
+    if (jsonRoom.get("puzzle") != null) {
+      String puzzleName = jsonRoom.get("puzzle").toString().toUpperCase();
+
+      if (jsonObstacles.containsKey(puzzleName)) {
+        obstacle = createPuzzle(puzzleName);
+      }
+    } else if (jsonRoom.get("monster") != null) {
+      String monsterName = jsonRoom.get("monster").toString();
+
+      if (jsonObstacles.containsKey(monsterName)) {
+        obstacle = createMonster(monsterName);
+      }
+    }
+
     List<Fixture> fixtures = new ArrayList<>();
     if (jsonRoom.get("fixtures") != null)
       for (String fixtureName : jsonRoom.get("fixtures").toString().split(", "))
         if (jsonFixtures.get(fixtureName) != null)
           fixtures.add(createFixture(fixtureName));
+
     List<Item> items = new ArrayList<>();
     if (jsonRoom.get("items") != null)
       items = itemListFromString(jsonRoom.get("items").toString());
@@ -363,8 +445,11 @@ public class JsonBuilder implements IGameBuilder {
    * Sets up the item factory from JSON data.
    */
   private void itemFactorySetup() {
-    if (json.get("items") instanceof JSONArray)
-      ItemFactory.getInstance().itemsFromJson((JSONArray) json.get("items"));
+    JSONArray jsonItems = json.get("items") instanceof JSONArray
+            ? (JSONArray) json.get("items")
+            : new JSONArray();
+
+    ItemFactory.getInstance().itemsFromJson(jsonItems);
   }
 
   /**

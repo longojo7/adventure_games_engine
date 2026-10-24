@@ -54,7 +54,7 @@ public class GameController implements IGameController {
     model.setPlayerName(playerName);
     output.append("You will now be named: "
             + model.getPlayerName()
-            + "\nWelcome to the world of Adventures!"
+            + "\nWelcome to the world of adventure!"
             + "\n------------------------------\n");
     displayCommandMenu();
     output.append("\nYou start your adventure in the ").append(model.roomName()).append("\n");
@@ -109,10 +109,10 @@ public class GameController implements IGameController {
     String monsterAttack = model.monsterAttack();
     if (monsterAttack == null || !model.roomObstacleActive())
       return;
-    output.append(model.getPlayerName() + " Takes " + model.monsterDamage() + " Damage");
+    output.append(model.getPlayerName()).append(" takes ").append(String.valueOf(model.monsterDamage())).append(" damage.");
     if (!model.playerStatus().equals("Asleep"))
       return;
-    output.append("\nYou have Fallen Asleep. ");
+    output.append("\nYou have fallen asleep. ");
     handleQuit();
   }
 
@@ -241,7 +241,7 @@ public class GameController implements IGameController {
   private void handleMove(Direction direction) throws IOException {
     if (model.walk(direction)) {
       output.append("You move ").append(direction.name().toLowerCase()).append(".\n");
-      // may have to revisit this since I'm not sure what movement will look it
+      // May need to revisit how movement output should look
       displayRoomDescription(true);
     } else {
       output.append(">> You cannot go that direction! <<\n");
@@ -280,7 +280,7 @@ public class GameController implements IGameController {
       return;
     }
     if (model.dropItem(itemName)) {
-      output.append("You dropped ").append(itemName).append("in the ").append(model.roomName());
+      output.append("You dropped ").append(itemName).append(" in the ").append(model.roomName()).append(".\n");
     } else {
       output.append("You don't have that item.\n");
     }
@@ -307,7 +307,7 @@ public class GameController implements IGameController {
   }
 
   /**
-   * Handles the look command - re displays the current room.
+   * Handles the look command by re-displaying the current room.
    *
    * @throws IOException if an I/O error occurs.
    */
@@ -367,6 +367,12 @@ public class GameController implements IGameController {
   private void handleAnswer(String answer) throws IOException {
     if (answer.isEmpty()) {
       output.append("Answer what? Please provide an answer.\n");
+      return;
+    }
+
+    // Handle when there is no active puzzle or monster
+    if (!model.roomObstacleActive()) {
+      output.append("There is no active puzzle or monster to answer here.\n");
       return;
     }
 

@@ -11,6 +11,7 @@ import engine.model.rooms.Fixture;
 import engine.model.rooms.IRoom;
 import engine.model.rooms.obstacles.ItemSolution;
 import engine.model.rooms.obstacles.PasswordSolution;
+import engine.model.rooms.obstacles.IObstacle;
 
 /**
  * Implementation of the game engine model.
@@ -137,8 +138,16 @@ public class EngineModel implements IEngineModel {
 
   @Override
   public boolean answerQuestion(String answer) {
-    if (player.getCurrentRoom().getObstacle().attemptSolution(new PasswordSolution(answer)))
+    IObstacle obstacle = player.getCurrentRoom().getObstacle();
+
+    if (obstacle == null || !obstacle.isActive()) {
+      return false;
+    }
+
+    if (obstacle.attemptSolution(new PasswordSolution(answer))) {
       return true;
+    }
+
     damagePlayer();
     return false;
   }

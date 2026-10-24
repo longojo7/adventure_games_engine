@@ -184,7 +184,7 @@ public class GameView extends JFrame implements IGameView {
 
     // left side for status
     JPanel statusPanel = new JPanel(new BorderLayout());
-    this.playerStatus = new JLabel("Player is wide awake.");
+    this.playerStatus = new JLabel("Health: –– / –– | Status: ––", SwingConstants.CENTER);
     statusPanel.add(playerStatus, BorderLayout.CENTER);
     statusPanel.setBorder(BorderFactory.createTitledBorder("Player Status"));
 
@@ -240,7 +240,7 @@ public class GameView extends JFrame implements IGameView {
       JLabel subtitle = new JLabel("<html><div style='text-align:center;'>" +
               "This game was created by Josh, Ethan, and Steven.<br>" +
               "You will embark on adventures through our engine where you can move through<br>" +
-              "different rooms, interact with items, solves puzzles, and defeat monsters.<br>" +
+              "different rooms, interact with items, solve puzzles, and defeat monsters.<br>" +
               "Make sure you don't fall asleep and have fun!</div></html>", SwingConstants.CENTER);
       JLabel imageLabel = new JLabel(icon, SwingConstants.CENTER);
       title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -335,6 +335,7 @@ public class GameView extends JFrame implements IGameView {
 
   @Override
   public void updateHealth(String health) {
+    this.playerStatus.setHorizontalAlignment(SwingConstants.CENTER);
     this.playerStatus.setText(health);
   }
 
